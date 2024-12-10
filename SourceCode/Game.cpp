@@ -128,10 +128,10 @@ Game::game_init() {
 	// init font setting
 	FC->init();
 
-	ui = new UI();
-	ui->init();
+	//ui = new UI();
+	//ui->init();
 
-	DC->level->init();
+	//DC->level->init();
 	DC->hero->init();
 	
 
@@ -166,7 +166,7 @@ Game::game_update() {
 			static ALLEGRO_SAMPLE_INSTANCE *instance = nullptr;
 			if(!is_played) {
 				instance = SC->play(game_start_sound_path, ALLEGRO_PLAYMODE_ONCE);
-				DC->level->load_level(1);
+				//DC->level->load_level(1);
 				is_played = true;
 			}
 
@@ -187,10 +187,11 @@ Game::game_update() {
 				debug_log("<Game> state: change to PAUSE\n");
 				state = STATE::PAUSE;
 			}
+			/*
 			if(DC->level->remain_monsters() == 0 && DC->monsters.size() == 0) {
 				debug_log("<Game> state: change to END\n");
 				state = STATE::END;
-			}
+			}*/
 			if(DC->player->HP == 0) {
 				debug_log("<Game> state: change to END\n");
 				state = STATE::END;
@@ -211,10 +212,10 @@ Game::game_update() {
 	if(state != STATE::PAUSE) {
 		DC->player->update();
 		SC->update();
-		ui->update();
+		//ui->update();
 		DC->hero->update();
 		if(state != STATE::START) {
-			DC->level->update();
+			//DC->level->update();
 			OC->update();
 		}
 	}
@@ -238,28 +239,17 @@ Game::game_draw() {
 	if(state != STATE::END) {
 		// background
 
-		// 如果 background 不存在，則使用 (0, 50, 0) 的顏色清除畫面
 		if (background) {
 			al_draw_bitmap(background, 0, 0, 0);
 		} else {
 			al_clear_to_color(al_map_rgb(173, 216, 230)); // 預設背景顏色
 		}
-		if(DC->game_field_length < DC->window_width)
-			al_draw_filled_rectangle(
-				DC->game_field_length, 0,
-				DC->window_width, DC->window_height,
-				al_map_rgb(100, 100, 100));
-		if(DC->game_field_length < DC->window_height)
-			al_draw_filled_rectangle(
-				0, DC->game_field_length,
-				DC->window_width, DC->window_height,
-				al_map_rgb(100, 100, 100));
 		// user interface
 		if(state != STATE::START) {
-			DC->level->draw();
+			//DC->level->draw();
 			DC->hero->draw();
-			ui->draw();
-			OC->draw();
+			//ui->draw();
+			//OC->draw();
 		}
 	}
 	switch(state) {

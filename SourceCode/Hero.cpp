@@ -28,24 +28,65 @@ void Hero::init(){
 });
 
 }
-
-void Hero::update(){
+void Hero::update() {
     DataCenter *DC = DataCenter::get_instance();
-    if (DC->key_state[ALLEGRO_KEY_W]){
-        shape->update_center_y(shape->center_y() - speed);
-        state = HeroState::BACK;
-    } else if (DC->key_state[ALLEGRO_KEY_A]){
-        shape->update_center_x(shape->center_x() - speed);
-        state = HeroState::LEFT;
-    } else if (DC->key_state[ALLEGRO_KEY_S]){
-        shape->update_center_y(shape->center_y() + speed);
-        state = HeroState::FRONT;
-    } else if (DC->key_state[ALLEGRO_KEY_D]){
-        shape->update_center_x(shape->center_x() + speed);
-        state = HeroState::RIGHT;
+
+    // 取得角色的寬高
+    GIFCenter *GIFC = GIFCenter::get_instance();
+    ALGIF_ANIMATION *gif = GIFC->get(gif_path[HeroState::FRONT]);
+    float hero_width = gif->width;
+    float hero_height = gif->height;
+
+    // 取得角色的當前座標
+    float current_x = shape->center_x();
+    float current_y = shape->center_y();
+
+    // 取得視窗大小
+    float window_width = DC->window_width;
+    float window_height = DC->window_height;
+
+    // ====== 物理系統參數 ======
+    static float velocity_y = 0.0f;   // 垂直速度
+    const float gravity = 0.5f;       // 重力加速度 (可以根據需要調整)
+    const float jump_speed = -12.0f;  // 跳躍時的初速度
+    bool on_ground = (current_y + hero_height / 2 >= window_height); // 檢查角色是否在地面
+
+    // 如果角色在地面上，並且玩家按下空白鍵，則角色跳起來
+    if (on_ground) {
+        velocity_y = 0; // 停止下落
+        if (DC->key_state[ALLEGRO_KEY_SPACE]) {
+            velocity_y = jump_speed; // 給角色一個向上的速度
+            on_ground = false; // 角色已經離開地面
+        }
+    } else {
+        velocity_y += gravity; // 角色受重力影響，下落速度增加
     }
 
+    // 讓角色的 y 座標根據速度進行變化
+    shape->update_center_y(current_y + velocity_y);
+
+    // 限制角色不會掉出視窗底部（地面）
+    if (shape->center_y() + hero_height / 2 > window_height) {
+        shape->update_center_y(window_height - hero_height / 2);
+        velocity_y = 0; // 停止速度，角色停止下落
+        on_ground = true; // 角色已經回到地面上
+    }
+
+    // 按鍵控制角色移動
+    if (DC->key_state[ALLEGRO_KEY_LEFT]) {
+        if (current_x - speed - hero_width / 2 > 0) {
+            shape->update_center_x(current_x - speed);
+            state = HeroState::LEFT;
+        }
+    } 
+    else if (DC->key_state[ALLEGRO_KEY_RIGHT]) {
+        if (current_x + speed + hero_width / 2 < window_width) {
+            shape->update_center_x(current_x + speed);
+            state = HeroState::RIGHT;
+        }
+    }
 }
+
 
 void Hero::draw(){
     GIFCenter *GIFC = GIFCenter::get_instance();
