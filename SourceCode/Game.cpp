@@ -19,7 +19,7 @@
 // fixed settings
 constexpr char game_icon_img_path[] = "./assets/image/game_icon.png";
 constexpr char game_start_sound_path[] = "./assets/sound/growl.wav";
-constexpr char background_img_path[] = "./assets/image/StartBackground.jpg";
+constexpr char background_img_path[] = "";
 constexpr char background_sound_path[] = "./assets/sound/BackgroundMusic.ogg";
 
 /**
@@ -136,7 +136,12 @@ Game::game_init() {
 	
 
 	// game start
-	background = IC->get(background_img_path);
+	if (std::strlen(background_img_path) > 0) {
+		background = IC->get(background_img_path);
+	}
+	else{
+		background = nullptr;
+	}
 	debug_log("Game state: change to START\n");
 	state = STATE::START;
 	al_start_timer(timer);
@@ -232,7 +237,13 @@ Game::game_draw() {
 	al_clear_to_color(al_map_rgb(100, 100, 100));
 	if(state != STATE::END) {
 		// background
-		al_draw_bitmap(background, 0, 0, 0);
+
+		// 如果 background 不存在，則使用 (0, 50, 0) 的顏色清除畫面
+		if (background) {
+			al_draw_bitmap(background, 0, 0, 0);
+		} else {
+			al_clear_to_color(al_map_rgb(173, 216, 230)); // 預設背景顏色
+		}
 		if(DC->game_field_length < DC->window_width)
 			al_draw_filled_rectangle(
 				DC->game_field_length, 0,
