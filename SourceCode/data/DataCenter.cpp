@@ -45,7 +45,7 @@ DataCenter::~DataCenter() {
 	for(Bullet *&b : towerBullets) {
 		delete b;
 	}
-	for(Tile &t : tiles) {
+	for(Tile *&t : tiles) {
 		delete &t;
 	}
 	delete map;

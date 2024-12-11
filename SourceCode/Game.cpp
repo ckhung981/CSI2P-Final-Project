@@ -133,8 +133,8 @@ Game::game_init() {
 	// init map setting
 	DC->map->init();
 
-	//ui = new UI();
-	//ui->init();
+	ui = new UI();
+	ui->init();
 
 	//DC->level->init();
 	DC->hero->init();

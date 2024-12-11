@@ -17,8 +17,10 @@ class Map {
 		// 繪製所有的方磚
 		void draw();
 
-		// 更新整個地圖
+		// 更新整個地圖e
 		void update();
+
+		Tile  *create_tile(float x, float y, float width, float height, const char* image_path);
 	
 };
 

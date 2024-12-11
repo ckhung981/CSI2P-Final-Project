@@ -62,12 +62,11 @@ void Hero::update() {
     velocity_y += gravity;
     shape->update_center_y(current_y + velocity_y);
 
-    // 取得地圖中的所有方磚
-    const std::vector<Tile>& all_tiles = DC->tiles;
 
     // 與方磚的碰撞檢測
     on_ground = false;
-    for (const Tile& tile : all_tiles) {
+    for (const auto &tile_ptr : DC->tiles) {
+        Tile &tile = *tile_ptr;
         if (previous_y + hero_height / 2 <= tile.top() &&  // **上一幀的底部在 Tile 上方**
             hero_bottom >= tile.top() &&  // **當前幀的底部位於 Tile 內部**
             current_x + hero_width / 2 > tile.left() &&  // **X 軸判定：左側進入範圍**
@@ -78,7 +77,6 @@ void Hero::update() {
             on_ground = true;
             break;
         }
-        
     }
 
     // 如果 Hero 掉到地面

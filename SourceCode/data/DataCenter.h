@@ -96,7 +96,7 @@ public:
 	 */
 	std::vector<Bullet*> towerBullets;
 
-	std::vector<Tile> tiles;
+	std::vector<Tile*> tiles;
 	/**
 	 * @brief Stores the map of the game.
 	 * @details The map is a 2D array of tiles.

@@ -17,10 +17,9 @@ Map::Map() {}
 void Map::init() {
 	DataCenter *DC = DataCenter::get_instance();
 
-    std::ifstream file("./assets/maps/map.csv"); // 指定 CSV 文件的路徑
+    std::ifstream file("./assets/map/tile_based_map_dynamic.csv"); // 指定 CSV 文件的路徑
     if (!file.is_open()) {
         std::cerr << "Error: Could not open map CSV file." << std::endl;
-        exit(1);
     }
 
     
@@ -55,7 +54,7 @@ void Map::init() {
             if (map_data[i][j] == 1) { // 1 代表有方磚，0 代表沒有方磚
                 float x = j * tile_width;
                 float y = i * tile_height;
-                DC->tiles.push_back(Tile(x, y, tile_width, tile_height, TILE_IMAGE_PATH));
+                DC->tiles.emplace_back(create_tile(x, y, tile_width, tile_height, TILE_IMAGE_PATH));
             }
         }
     }
@@ -64,7 +63,8 @@ void Map::init() {
 // 繪製所有的方磚
 void Map::draw() {
     DataCenter *DC = DataCenter::get_instance();
-    for (Tile &tile : DC->tiles) {
+    for (auto &tile_ptr : DC->tiles) {
+        Tile &tile = *tile_ptr;
         tile.draw();
     }
 }
@@ -72,8 +72,13 @@ void Map::draw() {
 // 更新整個地圖
 void Map::update() {
     DataCenter *DC = DataCenter::get_instance();
-    for (Tile &tile : DC->tiles) {
+    for (auto &tile_ptr : DC->tiles) {
+        Tile &tile = *tile_ptr;
         tile.update();
     }
+}
+
+Tile *Map::create_tile(float x, float y, float width, float height, const char* image_path) {
+    return new Tile(x, y, width, height, image_path);
 }
 
