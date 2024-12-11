@@ -2,6 +2,8 @@
 #include "data/GIFCenter.h"
 #include "data/DataCenter.h"
 #include "shapes/Rectangle.h"
+#include "Map.h"
+#include "Tile.h"
 #include <cstdio>
 namespace HeroSetting {
 	static constexpr char gif_root_path[50] = "./assets/gif/hero";
@@ -40,6 +42,8 @@ void Hero::update() {
     // 取得角色的當前座標
     float current_x = shape->center_x();
     float current_y = shape->center_y();
+    float previous_y = current_y; // 儲存上一幀的 y 位置
+    float hero_bottom = current_y + hero_height / 2;// 角色的底部位置
 
     // 取得視窗大小
     float window_width = DC->window_width;
@@ -52,10 +56,40 @@ void Hero::update() {
     bool on_ground = (current_y + hero_height / 2 >= window_height); // 檢查角色是否在地面
     static int jump_count = 0;      // 記錄跳躍次數
     const int max_jumps = 2; // 最大跳躍次數
+    // ============================
 
-    // 如果角色在地面上，重置跳躍次數
+    // 角色受重力影響，下落速度增加
+    velocity_y += gravity;
+    shape->update_center_y(current_y + velocity_y);
+
+    // 取得地圖中的所有方磚
+    const std::vector<Tile>& all_tiles = DC->tiles;
+
+    // 與方磚的碰撞檢測
+    on_ground = false;
+    for (const Tile& tile : all_tiles) {
+        if (previous_y + hero_height / 2 <= tile.top() &&  // **上一幀的底部在 Tile 上方**
+            hero_bottom >= tile.top() &&  // **當前幀的底部位於 Tile 內部**
+            current_x + hero_width / 2 > tile.left() &&  // **X 軸判定：左側進入範圍**
+            current_x - hero_width / 2 < tile.right())  // **X 軸判定：右側進入範圍**
+        {
+            // Hero 碰到方磚，防止穿透
+            shape->update_center_y(tile.top() - hero_height / 2);
+            on_ground = true;
+            break;
+        }
+        
+    }
+
+    // 如果 Hero 掉到地面
+    if (shape->center_y() + hero_height / 2 > window_height) {
+        // Hero回到地面，防止穿透
+        shape->update_center_y(window_height - hero_height / 2);
+        on_ground = true;
+    }
+
+    // 如果角色在平面上，重置跳躍次數
     if (on_ground) {
-        shape->update_center_y(window_height - hero_height / 2); // 鎖定在地面
         velocity_y = 0; // 停止速度，角色停止下落
         jump_count = 0; // 重置跳躍次數，因為已經回到地面
     }
@@ -65,12 +99,6 @@ void Hero::update() {
         velocity_y = jump_speed; // 給角色一個向上的速度
         jump_count++; // 增加跳躍次數
     }
-
-    // 角色受重力影響，下落速度增加
-    velocity_y += gravity;
-
-    // 讓角色的 y 座標根據速度進行變化
-    shape->update_center_y(current_y + velocity_y);
 
     // 限制角色不會掉出視窗底部（地面）
     if (shape->center_y() + hero_height / 2 > window_height) {

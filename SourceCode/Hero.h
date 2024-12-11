@@ -2,6 +2,7 @@
 #define HERO_H_INCLUDED
 
 #include "Object.h"
+#include "Map.h"
 #include <map>
 #include <string>
 enum class HeroState{

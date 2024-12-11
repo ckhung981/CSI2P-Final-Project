@@ -12,7 +12,8 @@ class Level;
 class Monster;
 class Tower;
 class Bullet;
-
+class Tile;
+class Map;
 class Hero;
 
 /**
@@ -94,7 +95,23 @@ public:
 	 * @see Bullet
 	 */
 	std::vector<Bullet*> towerBullets;
+
+	std::vector<Tile> tiles;
+	/**
+	 * @brief Stores the map of the game.
+	 * @details The map is a 2D array of tiles.
+	 * @see Tile
+	 */
+
+	Map *map;
 	Hero *hero;
+	/**
+	 * @brief Stores the hero object.
+	 * @details The hero is the main character of the game.
+	 * @see Hero
+	 */
+
+
 private:
 	DataCenter();
 };

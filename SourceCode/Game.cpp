@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "Level.h"
 #include "Hero.h"
+#include "Map.h"
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
@@ -22,6 +23,7 @@ constexpr char game_start_sound_path[] = "./assets/sound/growl.wav";
 constexpr char background_img_path[] = "";
 constexpr char background_sound_path[] = "./assets/sound/BackgroundMusic.ogg";
 
+std::vector<Tile> tiles;
 /**
  * @brief Game entry.
  * @details The function processes all allegro events and update the event state to a generic data storage (i.e. DataCenter).
@@ -128,6 +130,9 @@ Game::game_init() {
 	// init font setting
 	FC->init();
 
+	// init map setting
+	DC->map->init();
+
 	//ui = new UI();
 	//ui->init();
 
@@ -213,6 +218,7 @@ Game::game_update() {
 		DC->player->update();
 		SC->update();
 		//ui->update();
+		DC->map->update();
 		DC->hero->update();
 		if(state != STATE::START) {
 			//DC->level->update();
@@ -248,6 +254,7 @@ Game::game_draw() {
 		if(state != STATE::START) {
 			//DC->level->draw();
 			DC->hero->draw();
+			DC->map->draw();
 			//ui->draw();
 			//OC->draw();
 		}
