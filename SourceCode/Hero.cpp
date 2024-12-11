@@ -50,17 +50,24 @@ void Hero::update() {
     const float gravity = 0.5f;       // 重力加速度 (可以根據需要調整)
     const float jump_speed = -12.0f;  // 跳躍時的初速度
     bool on_ground = (current_y + hero_height / 2 >= window_height); // 檢查角色是否在地面
+    static int jump_count = 0;      // 記錄跳躍次數
+    const int max_jumps = 2; // 最大跳躍次數
 
-    // 如果角色在地面上，並且玩家按下空白鍵，則角色跳起來
+    // 如果角色在地面上，重置跳躍次數
     if (on_ground) {
-        velocity_y = 0; // 停止下落
-        if (DC->key_state[ALLEGRO_KEY_SPACE]) {
-            velocity_y = jump_speed; // 給角色一個向上的速度
-            on_ground = false; // 角色已經離開地面
-        }
-    } else {
-        velocity_y += gravity; // 角色受重力影響，下落速度增加
+        shape->update_center_y(window_height - hero_height / 2); // 鎖定在地面
+        velocity_y = 0; // 停止速度，角色停止下落
+        jump_count = 0; // 重置跳躍次數，因為已經回到地面
     }
+
+    // 如果玩家按下空白鍵，並且還有跳躍次數，則進行跳躍
+    if ( DC->key_state[ALLEGRO_KEY_SPACE] && !DC->prev_key_state[ALLEGRO_KEY_SPACE] && jump_count < max_jumps) {
+        velocity_y = jump_speed; // 給角色一個向上的速度
+        jump_count++; // 增加跳躍次數
+    }
+
+    // 角色受重力影響，下落速度增加
+    velocity_y += gravity;
 
     // 讓角色的 y 座標根據速度進行變化
     shape->update_center_y(current_y + velocity_y);
