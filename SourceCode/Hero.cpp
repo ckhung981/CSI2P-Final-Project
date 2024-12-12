@@ -98,12 +98,19 @@ void Hero::update() {
                 velocity_y = 0; // 停止速度，角色停止  下落
                 break;
             }
+        }
+    }
+    // 碰撞檢測
+    for (const auto &tile_ptr : DC->tiles) {
+        Tile &tile = *tile_ptr;
+        if (shape->overlap(*tile.shape)) {
             // 如果角色與 Tile 左側發生水平碰撞
             if (hero_right >= tile.left() &&         // 角色的右側超過 Tile 的左側
                 hero_right <= tile.left() + hit_buffet_x && // 角色的右側未超過 Tile 的左側
                 hero_left < tile.left() &&          // 角色的左側未超過 Tile 的左側
                 hero_bottom > tile.top() &&         // 角色的底部超過 Tile 的頂部
                 hero_top < tile.bottom()) {         // 角色的頂部未超過 Tile 的底部
+                std::cout << "left" << std::endl;
                 shape->update_center_x(tile.left() - hero_width / 2 - 0.5);
                 break;
             }
@@ -113,12 +120,12 @@ void Hero::update() {
                 hero_right > tile.right() &&        // 角色的右側超過 Tile 的右側
                 hero_bottom > tile.top() &&         // 角色的底部超過 Tile 的頂部
                 hero_top < tile.bottom()) {         // 角色的頂部未超過 Tile 的底部
+                std::cout << "right" << std::endl;
                 shape->update_center_x(tile.right() + hero_width / 2 + 0.5);
                 break;
             }
         }
     }
-
     // 如果 Hero 掉到地面
     if (shape->center_y() + hero_height / 2 >= window_height) {
         // Hero回到地面，防止穿透
@@ -142,13 +149,46 @@ void Hero::update() {
     // 水平方向碰撞檢測（處理移動）
     if (DC->key_state[ALLEGRO_KEY_LEFT]) {
         if (current_x - speed - hero_width / 2 > 0) {
-        shape->update_center_x(current_x - speed);
-        state = HeroState::LEFT;
+            shape->update_center_x(current_x - speed);
+            // 碰撞檢測
+            for (const auto &tile_ptr : DC->tiles) {
+                Tile &tile = *tile_ptr;
+                if (shape->overlap(*tile.shape)) {
+                    // 如果角色與 Tile 右側發生水平碰撞
+                    if (hero_left <= tile.right() &&         // 角色的左側未超過 Tile 的右側
+                        hero_left >= tile.right() - hit_buffet_x && // 角色的左側未超過 Tile 的右側
+                        hero_right > tile.right() &&        // 角色的右側超過 Tile 的右側
+                        hero_bottom > tile.top() &&         // 角色的底部超過 Tile 的頂部
+                        hero_top < tile.bottom()) {         // 角色的頂部未超過 Tile 的底部
+                        std::cout << "right" << std::endl;
+                        shape->update_center_x(tile.right() + hero_width / 2);
+                        break;
+                    }
+                }
+            }
+            
+            state = HeroState::LEFT;
         }
     }
     if (DC->key_state[ALLEGRO_KEY_RIGHT]) {
         if (current_x + speed + hero_width / 2 < window_width) {
             shape->update_center_x(current_x + speed);
+            // 碰撞檢測
+            for (const auto &tile_ptr : DC->tiles) {
+                Tile &tile = *tile_ptr ;
+                if (shape->overlap(*tile.shape)) {
+                    // 如果角色與 Tile 左側發生水平碰撞
+                    if (hero_right >= tile.left() &&         // 角色的右側超過 Tile 的左側
+                        hero_right <= tile.left() + hit_buffet_x && // 角色的右側未超過 Tile 的左側
+                        hero_left < tile.left() &&          // 角色的左側未超過 Tile 的左側
+                        hero_bottom > tile.top() &&         // 角色的底部超過 Tile 的頂部
+                        hero_top < tile.bottom()) {         // 角色的頂部未超過 Tile 的底部
+                        std::cout << "left" << std::endl;
+                        shape->update_center_x(tile.left() - hero_width / 2);
+                        break;
+                    }
+                }
+            }
             state = HeroState::RIGHT;
         }
     }
