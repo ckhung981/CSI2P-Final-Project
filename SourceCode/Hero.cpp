@@ -66,11 +66,14 @@ void Hero::update() {
     // 取得視窗大小
     float window_width = DC->window_width;
     float window_height = DC->window_height;
+    float origin_window_width = 800;
+    float scale = DC->window_width / origin_window_width;
+    std::cout << scale << std::endl;
 
     // ====== 物理系統參數 ======
-    static float velocity_y = 0.0f;   // 垂直速度
-    const float gravity = 0.5f;       // 重力加速度 (可以根據需要調整)
-    const float jump_speed = -10.0f;  // 跳躍時的初速度
+    static float velocity_y = 0.0f *scale;   // 垂直速度
+    const float gravity = 0.5f * scale;       // 重力加速度 (可以根據需要調整)
+    const float jump_speed = -10.0f * scale;  // 跳躍時的初速度
     bool on_ground = (current_y + hero_height / 2 >= window_height); // 檢查角色是否在地面
     static int jump_count = 0;      // 記錄跳躍次數
     const int max_jumps = 2; // 最大跳躍次數
@@ -120,7 +123,7 @@ void Hero::update() {
                 hero_bottom > tile.top() &&         // 角色的底部超過 Tile 的頂部
                 hero_top < tile.bottom()) {         // 角色的頂部未超過 Tile 的底部
                 std::cout << "left" << std::endl;
-                shape->update_center_x(tile.left() - hero_width / 2 - 0.5);
+                shape->update_center_x(tile.left() - hero_width / 2 - 0.5*scale);
                 break;
             }
             // 如果角色與 Tile 右側發生水平碰撞
@@ -130,7 +133,7 @@ void Hero::update() {
                 hero_bottom > tile.top() &&         // 角色的底部超過 Tile 的頂部
                 hero_top < tile.bottom()) {         // 角色的頂部未超過 Tile 的底部
                 std::cout << "right" << std::endl;
-                shape->update_center_x(tile.right() + hero_width / 2 + 0.5);
+                shape->update_center_x(tile.right() + hero_width / 2 + 0.5*scale);
                 break;
             }
         }
@@ -138,7 +141,7 @@ void Hero::update() {
     // 如果 Hero 掉到地面
     if (shape->center_y() + hero_height / 2 >= window_height) {
         // Hero回到地面，防止穿透
-        shape->update_center_y(window_height - hero_height / 2 - 0.5);
+        shape->update_center_y(window_height - hero_height / 2 - 0.5*scale);
         on_ground = true;
     }
 

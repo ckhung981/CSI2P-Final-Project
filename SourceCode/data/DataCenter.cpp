@@ -12,9 +12,9 @@
 // fixed settings
 namespace DataSetting {
 	constexpr double FPS = 60;
-	constexpr int window_width = 800;
-	constexpr int window_height = 600;
-	constexpr int game_field_length = 600;
+	constexpr int window_width = 1200;
+	constexpr int window_height = 900;
+	constexpr int game_field_length = 900;
 }
 
 DataCenter::DataCenter() {
