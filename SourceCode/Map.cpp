@@ -54,12 +54,19 @@ void Map::init() {
     float tile_height = static_cast<float>(window_height) / rows;
 
     // 使用 2D 陣列中的數據來創建方磚
+    // 1 代表有方磚，0 代表沒有方磚
+    // 7 代表有英雄
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-            if (map_data[i][j] == 1) { // 1 代表有方磚，0 代表沒有方磚
+            if (map_data[i][j] == 1) { 
                 float x = j * tile_width;
                 float y = i * tile_height;
                 DC->tiles.emplace_back(create_tile(x, y, tile_width, tile_height, TILE_IMAGE_PATH));
+            }else if (map_data[i][j] == 7){
+                float x = j * tile_width;
+                float y = i * tile_height;
+                this->hero_x = x;
+                this->hero_y = y;
             }
         }
     }

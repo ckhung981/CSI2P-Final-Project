@@ -253,8 +253,8 @@ Game::game_draw() {
 		// user interface
 		if(state != STATE::START) {
 			//DC->level->draw();
-			DC->hero->draw();
 			DC->map->draw();
+			DC->hero->draw();
 			//ui->draw();
 			//OC->draw();
 		}

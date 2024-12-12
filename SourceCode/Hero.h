@@ -20,6 +20,8 @@ class Hero : public Object
         void update();
         void draw();
     private:
+        float hero_width;
+        float hero_height;
         HeroState state = HeroState::FRONT;
         double speed = 5;
         std::map<HeroState, std::string> gif_path;

@@ -24,6 +24,11 @@ class Tile : public Object
         float left() const { return shape->center_x() - tile_width / 2; }
         float right() const { return shape->center_x() + tile_width / 2; }
 
+        //取得方塊的寬度
+        float get_width() const { return tile_width; }
+
+        //取得方塊的高度
+        float get_height() const { return tile_height; }
     private:
         ALLEGRO_BITMAP *image; // 方磚的圖片
         float tile_width;  // 這是寬度

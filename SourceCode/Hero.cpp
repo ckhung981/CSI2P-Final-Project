@@ -22,25 +22,34 @@ void Hero::init(){
     }
     GIFCenter *GIFC = GIFCenter::get_instance();
     DataCenter *DC = DataCenter::get_instance();
-    ALGIF_ANIMATION *gif = GIFC->get(gif_path[HeroState::FRONT]);
-    shape.reset(new Rectangle{
-        DC->window_width/2, 
-        DC->window_height/2,
-        DC->window_width/2 + gif->width,
-        DC->window_height/2 + gif->height
+    Map *map = DC->map;
+    
+    if (!DC->tiles.empty()) {
+        Tile &tile = *DC->tiles[0];
+        this->hero_width = tile.get_width();
+        this->hero_height = tile.get_height();
+    }
+    //ALGIF_ANIMATION *gif = GIFC->get(gif_path[HeroState::FRONT]);
+
+    // 調整 Hero 的寬高與 Tile 的一致
+ shape.reset(new Rectangle{
+    map->get_hero_x() ,
+    map->get_hero_y() ,
+    map->get_hero_x() + hero_width ,
+    map->get_hero_y() + hero_height
 });
 
 }
 void Hero::update() {
     DataCenter *DC = DataCenter::get_instance();
     
-
+/*
     // 取得角色的寬高
     GIFCenter *GIFC = GIFCenter::get_instance();
     ALGIF_ANIMATION *gif = GIFC->get(gif_path[HeroState::FRONT]);
     float hero_width = gif->width;
     float hero_height = gif->height;
-
+*/
     // 取得角色的當前座標
     float current_x = shape->center_x();
     float current_y = shape->center_y();
@@ -61,7 +70,7 @@ void Hero::update() {
     // ====== 物理系統參數 ======
     static float velocity_y = 0.0f;   // 垂直速度
     const float gravity = 0.5f;       // 重力加速度 (可以根據需要調整)
-    const float jump_speed = -12.0f;  // 跳躍時的初速度
+    const float jump_speed = -10.0f;  // 跳躍時的初速度
     bool on_ground = (current_y + hero_height / 2 >= window_height); // 檢查角色是否在地面
     static int jump_count = 0;      // 記錄跳躍次數
     const int max_jumps = 2; // 最大跳躍次數
@@ -197,11 +206,31 @@ void Hero::update() {
 
 void Hero::draw(){
     GIFCenter *GIFC = GIFCenter::get_instance();
+    DataCenter *DC = DataCenter::get_instance();
     ALGIF_ANIMATION *gif = GIFC->get(gif_path[state]);
+    /*
 	algif_draw_gif(
 		gif,
 		shape->center_x() - gif->width / 2,
 		shape->center_y() - gif->height / 2,
         0);
+*/
+    // 縮放的目標大小
+    float target_width = this->hero_width;
+    float target_height = this->hero_height;
+    
+    Map *map = DC->map;
+    // 使用 Allegro 繪製動態縮放的 GIF
+    al_draw_scaled_bitmap(
+        gif->frames[gif->display_index].rendered, // GIF 當前幀的圖片
+        0, 0, // 源圖的左上角（x, y）
+        gif->width, // 原始寬
+        gif->height, // 原始高
+        shape->center_x() - target_width / 2, // 目標繪製的左上角 X 坐標
+        shape->center_y() - target_height / 2, // 目標繪製的左上角 Y 坐標
+        target_width,  // 目標寬度
+        target_height, // 目標高度
+        0 // 無特殊標誌
+    );
         
 }
