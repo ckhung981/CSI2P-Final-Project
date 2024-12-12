@@ -28,6 +28,8 @@ class Tile : public Object
         ALLEGRO_BITMAP *image; // 方磚的圖片
         float tile_width;  // 這是寬度
         float tile_height; // 這是高度
+        float x; // tile x 座標
+        float y; // tile y 座標
 };
 
 

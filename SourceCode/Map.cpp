@@ -12,7 +12,6 @@ constexpr char TILE_IMAGE_PATH[] = "./assets/image/tile/red_block.png";
 Map::Map() {}
 
 
-
 // 初始化整個地圖，從 CSV 文件中讀取 2D 地圖數據
 void Map::init() {
 	DataCenter *DC = DataCenter::get_instance();
@@ -24,7 +23,7 @@ void Map::init() {
 
     
     const int window_width = DC->window_width; 
-    const int window_height = DC->window_width;
+    const int window_height = DC->window_height;
     std::string line;
     std::vector<std::vector<int>> map_data;
     
@@ -40,10 +39,16 @@ void Map::init() {
         map_data.push_back(row_data);
     }
     file.close();
-
+    for (const auto& row : map_data) {
+    for (const auto& cell : row) {
+        std::cout << cell << " ";
+    }
+    std::cout << std::endl;
+}
     int rows = map_data.size();
     int cols = map_data[0].size();
 
+    
     // 根據 n x m 切分整個遊戲視窗的區塊大小
     float tile_width = static_cast<float>(window_width) / cols;
     float tile_height = static_cast<float>(window_height) / rows;

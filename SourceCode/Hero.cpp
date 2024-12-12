@@ -5,6 +5,7 @@
 #include "Map.h"
 #include "Tile.h"
 #include <cstdio>
+#include <iostream>
 namespace HeroSetting {
 	static constexpr char gif_root_path[50] = "./assets/gif/hero";
 	static constexpr char gif_postfix[][10] = {
@@ -42,8 +43,15 @@ void Hero::update() {
     // 取得角色的當前座標
     float current_x = shape->center_x();
     float current_y = shape->center_y();
-    float previous_y = current_y; // 儲存上一幀的 y 位置
-    float hero_bottom = current_y + hero_height / 2;// 角色的底部位置
+    float prev_x = current_x;
+    float prev_y = current_y;
+
+    // 角色的邊界
+    float hero_bottom = current_y + hero_height / 2;
+    float hero_top = current_y - hero_height / 2;
+    float hero_left = current_x - hero_width / 2;
+    float hero_right = current_x + hero_width / 2;
+
 
     // 取得視窗大小
     float window_width = DC->window_width;
@@ -62,27 +70,35 @@ void Hero::update() {
     velocity_y += gravity;
     shape->update_center_y(current_y + velocity_y);
 
-
-    // 與方磚的碰撞檢測
-    on_ground = false;
+    // 垂直碰撞檢測
     for (const auto &tile_ptr : DC->tiles) {
         Tile &tile = *tile_ptr;
-        if (previous_y + hero_height / 2 <= tile.top() &&  // **上一幀的底部在 Tile 上方**
-            hero_bottom >= tile.top() &&  // **當前幀的底部位於 Tile 內部**
-            current_x + hero_width / 2 > tile.left() &&  // **X 軸判定：左側進入範圍**
-            current_x - hero_width / 2 < tile.right())  // **X 軸判定：右側進入範圍**
-        {
-            // Hero 碰到方磚，防止穿透
-            shape->update_center_y(tile.top() - hero_height / 2);
-            on_ground = true;
+
+        // 如果角色與 Tile 頂部發生垂直碰撞
+        if (hero_bottom >= tile.top() &&        // 角色底部接觸 Tile 頂部
+            hero_top < tile.top() &&            // 角色頂部未超過 Tile 頂部
+            hero_right > tile.left() &&         // 角色的右側超過 Tile 的左側
+            hero_left < tile.right()) {         // Tile 的右側超過角色的左側
+            shape->update_center_y(tile.top() - hero_height / 2 - 0.5); // 將角色鎖定在 Tile 上 // 0.5 是為了防止碰撞重複偵測
+            on_ground = true;                   // 設置為地面狀態
             break;
-        }
+        } 
+        /*
+        // 如果角色與 Tile 底部發生垂直碰撞
+        if (hero_bottom < tile.bottom() &&        // 角色底部未超過 Tile 底部
+            hero_top >= tile.bottom() &&            // 角色頂部接觸 Tile 底部
+            hero_right > tile.left() &&         // 角色的右側超過 Tile 的左側
+            hero_left < tile.right()) {         // Tile 的右側超過角色的左側
+            shape->update_center_y(tile.bottom() + hero_height / 2 + 0.5); // 將角色鎖定在 Tile 上 // 0.5 是為了防止碰撞重複偵測
+            velocity_y = 0; // 停止速度，角色停止下落
+            break;
+        }*/
     }
 
     // 如果 Hero 掉到地面
-    if (shape->center_y() + hero_height / 2 > window_height) {
+    if (shape->center_y() + hero_height / 2 >= window_height) {
         // Hero回到地面，防止穿透
-        shape->update_center_y(window_height - hero_height / 2);
+        shape->update_center_y(window_height - hero_height / 2 - 0.5);
         on_ground = true;
     }
 
@@ -98,22 +114,42 @@ void Hero::update() {
         jump_count++; // 增加跳躍次數
     }
 
-    // 限制角色不會掉出視窗底部（地面）
-    if (shape->center_y() + hero_height / 2 > window_height) {
-        shape->update_center_y(window_height - hero_height / 2);
-        velocity_y = 0; // 停止速度，角色停止下落
-        on_ground = true; // 角色已經回到地面上
-    }
 
-    // 按鍵控制角色移動
+    // 水平方向碰撞檢測（處理移動）
     if (DC->key_state[ALLEGRO_KEY_LEFT]) {
         if (current_x - speed - hero_width / 2 > 0) {
-            shape->update_center_x(current_x - speed);
-            state = HeroState::LEFT;
+        /*
+        for (const auto &tile_ptr : DC->tiles) {
+            Tile &tile = *tile_ptr;
+
+            // 如果角色左移時與 Tile 發生水平碰撞
+            if (hero_left <= tile.right() &&       // 角色的左側進入 Tile 的右邊界
+                hero_right > tile.left() &&        // 角色的右側超過 Tile 的左邊界
+                hero_bottom > tile.top() &&        // 角色的底部超過 Tile 的頂部
+                hero_top < tile.bottom()) {        // 角色的頂部未超過 Tile 的底部
+                shape->update_center_x(tile.right() + hero_width / 2 + 1); // 將角色鎖定在 Tile 左側 // 0.5 是為了防止碰撞重複偵測
+                break;
+            }
+        }*/
+        shape->update_center_x(current_x - speed);
+        state = HeroState::LEFT;
         }
-    } 
-    else if (DC->key_state[ALLEGRO_KEY_RIGHT]) {
+    }
+    if (DC->key_state[ALLEGRO_KEY_RIGHT]) {
         if (current_x + speed + hero_width / 2 < window_width) {
+            /*
+            for (const auto &tile_ptr : DC->tiles) {
+                Tile &tile = *tile_ptr;
+
+                // 如果角色右移時與 Tile 發生水平碰撞
+                if (hero_right >= tile.left() &&       // 角色的右側進入 Tile 的左邊界
+                    hero_left < tile.right() &&        // 角色的左側超過 Tile 的右邊界
+                    hero_bottom > tile.top() &&        // 角色的底部超過 Tile 的頂部
+                    hero_top < tile.bottom()) {        // 角色的頂部未超過 Tile 的底部
+                    shape->update_center_x(tile.left() - hero_width / 2 - 1); // 將角色鎖定在 Tile 右側 // 0.5 是為了防止碰撞重複偵測
+                    break;
+                }
+            }*/
             shape->update_center_x(current_x + speed);
             state = HeroState::RIGHT;
         }
