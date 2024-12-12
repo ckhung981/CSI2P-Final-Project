@@ -2,6 +2,7 @@
 #include "data/GIFCenter.h"
 #include "data/DataCenter.h"
 #include "shapes/Rectangle.h"
+#include <allegro5/allegro_primitives.h>
 #include "Map.h"
 #include "Tile.h"
 #include <cstdio>
@@ -32,12 +33,14 @@ void Hero::init(){
     //ALGIF_ANIMATION *gif = GIFC->get(gif_path[HeroState::FRONT]);
 
     // 調整 Hero 的寬高與 Tile 的一致
- shape.reset(new Rectangle{
-    map->get_hero_x() ,
-    map->get_hero_y() ,
-    map->get_hero_x() + hero_width ,
-    map->get_hero_y() + hero_height
-});
+    shape.reset(new Rectangle{
+        map->get_hero_x() ,
+        map->get_hero_y() ,
+        map->get_hero_x() + hero_width ,
+        map->get_hero_y() + hero_height
+    });
+
+    HP = 1;
 
 }
 void Hero::update() {
@@ -53,8 +56,6 @@ void Hero::update() {
     // 取得角色的當前座標
     float current_x = shape->center_x();
     float current_y = shape->center_y();
-    float prev_x = current_x;
-    float prev_y = current_y;
 
     // 角色的邊界
     float hero_bottom = current_y + hero_height / 2;
@@ -68,7 +69,6 @@ void Hero::update() {
     float window_height = DC->window_height;
     float origin_window_width = 800;
     float scale = DC->window_width / origin_window_width;
-    std::cout << scale << std::endl;
 
     // ====== 物理系統參數 ======
     static float velocity_y = 0.0f *scale;   // 垂直速度
@@ -85,7 +85,7 @@ void Hero::update() {
 
     float hit_buffet_y = abs(velocity_y*1.1);
     float hit_buffet_x = abs(speed*1.1);
-    // 碰撞檢測
+    // 垂直碰撞檢測
     for (const auto &tile_ptr : DC->tiles) {
         Tile &tile = *tile_ptr;
         if (shape->overlap(*tile.shape)) {
@@ -112,32 +112,7 @@ void Hero::update() {
             }
         }
     }
-    // 碰撞檢測
-    for (const auto &tile_ptr : DC->tiles) {
-        Tile &tile = *tile_ptr;
-        if (shape->overlap(*tile.shape)) {
-            // 如果角色與 Tile 左側發生水平碰撞
-            if (hero_right >= tile.left() &&         // 角色的右側超過 Tile 的左側
-                hero_right <= tile.left() + hit_buffet_x && // 角色的右側未超過 Tile 的左側
-                hero_left < tile.left() &&          // 角色的左側未超過 Tile 的左側
-                hero_bottom > tile.top() &&         // 角色的底部超過 Tile 的頂部
-                hero_top < tile.bottom()) {         // 角色的頂部未超過 Tile 的底部
-                std::cout << "left" << std::endl;
-                shape->update_center_x(tile.left() - hero_width / 2 - 0.5*scale);
-                break;
-            }
-            // 如果角色與 Tile 右側發生水平碰撞
-            if (hero_left <= tile.right() &&         // 角色的左側未超過 Tile 的右側
-                hero_left >= tile.right() - hit_buffet_x && // 角色的左側未超過 Tile 的右側
-                hero_right > tile.right() &&        // 角色的右側超過 Tile 的右側
-                hero_bottom > tile.top() &&         // 角色的底部超過 Tile 的頂部
-                hero_top < tile.bottom()) {         // 角色的頂部未超過 Tile 的底部
-                std::cout << "right" << std::endl;
-                shape->update_center_x(tile.right() + hero_width / 2 + 0.5*scale);
-                break;
-            }
-        }
-    }
+
     // 如果 Hero 掉到地面
     if (shape->center_y() + hero_height / 2 >= window_height) {
         // Hero回到地面，防止穿透
@@ -172,7 +147,6 @@ void Hero::update() {
                         hero_right > tile.right() &&        // 角色的右側超過 Tile 的右側
                         hero_bottom > tile.top() &&         // 角色的底部超過 Tile 的頂部
                         hero_top < tile.bottom()) {         // 角色的頂部未超過 Tile 的底部
-                        std::cout << "right" << std::endl;
                         shape->update_center_x(tile.right() + hero_width / 2);
                         break;
                     }
@@ -195,7 +169,6 @@ void Hero::update() {
                         hero_left < tile.left() &&          // 角色的左側未超過 Tile 的左側
                         hero_bottom > tile.top() &&         // 角色的底部超過 Tile 的頂部
                         hero_top < tile.bottom()) {         // 角色的頂部未超過 Tile 的底部
-                        std::cout << "left" << std::endl;
                         shape->update_center_x(tile.left() - hero_width / 2);
                         break;
                     }
@@ -222,7 +195,6 @@ void Hero::draw(){
     float target_width = this->hero_width;
     float target_height = this->hero_height;
     
-    Map *map = DC->map;
     // 使用 Allegro 繪製動態縮放的 GIF
     al_draw_scaled_bitmap(
         gif->frames[gif->display_index].rendered, // GIF 當前幀的圖片
@@ -235,5 +207,24 @@ void Hero::draw(){
         target_height, // 目標高度
         0 // 無特殊標誌
     );
-        
+    //==================================================================================================
+    //for debug
+    // 繪製邊框 (以矩形為例)
+    al_draw_rectangle(
+        shape->center_x() - this->hero_width / 2, 
+        shape->center_y() - this->hero_height / 2,
+        shape->center_x() + this->hero_width / 2, 
+        shape->center_y() + this->hero_height / 2,
+        al_map_rgb(255, 0, 0), // 紅色邊框
+        2                      // 邊框寬度
+    );
+    //==================================================================================================
+}    
+
+void Hero::die(){
+    //執行角色死亡的動作
+    HP = 0;
+    //播放死亡動畫
+
+
 }

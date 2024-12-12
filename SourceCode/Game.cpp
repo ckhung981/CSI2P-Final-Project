@@ -16,6 +16,7 @@
 #include <allegro5/allegro_acodec.h>
 #include <vector>
 #include <cstring>
+#include <iostream>
 
 // fixed settings
 constexpr char game_icon_img_path[] = "./assets/image/game_icon.png";
@@ -196,9 +197,9 @@ Game::game_update() {
 				debug_log("<Game> state: change to END\n");
 				state = STATE::END;
 			}*/
-			if(DC->player->HP == 0) {
-				debug_log("<Game> state: change to END\n");
-				state = STATE::END;
+			if(DC->hero->HP == 0) {
+				debug_log("<Game> state: change to DIE\n");
+				state = STATE::DIE;
 			}
 			break;
 		} case STATE::PAUSE: {
@@ -208,17 +209,29 @@ Game::game_update() {
 				state = STATE::LEVEL;
 			}
 			break;
+		} case STATE::DIE: {
+
+			if(DC->key_state[ALLEGRO_KEY_R] && !DC->prev_key_state[ALLEGRO_KEY_R]) {
+				debug_log("<Game> state: change to START\n");
+				game_restart();
+				state = STATE::START;
+			} else if(DC->key_state[ALLEGRO_KEY_ESCAPE] && !DC->prev_key_state[ALLEGRO_KEY_ESCAPE]) {
+				debug_log("<Game> state: change to END\n");
+				state = STATE::END;
+			}
+			break;
 		} case STATE::END: {
 			return false;
 		}
 	}
 	// If the game is not paused, we should progress update.
-	if(state != STATE::PAUSE) {
+	if(state != STATE::PAUSE ) {
 		DC->player->update();
 		SC->update();
-		//ui->update();
-		DC->map->update();
-		DC->hero->update();
+		if (state !=STATE::DIE) {
+			DC->map->update();
+			DC->hero->update();
+		}
 		if(state != STATE::START) {
 			//DC->level->update();
 			OC->update();
@@ -270,11 +283,44 @@ Game::game_draw() {
 				DC->window_width/2., DC->window_height/2.,
 				ALLEGRO_ALIGN_CENTRE, "GAME PAUSED");
 			break;
+		} case STATE::DIE: {
+			ImageCenter *IC = ImageCenter::get_instance();
+			ALLEGRO_BITMAP *image = IC->get("./assets/image/game_over_no_background.png");
+			// 計算繪製位置，將其置中
+			float target_width = DC->window_width * 0.8;  // 讓圖片寬度為視窗的 80%
+			float target_height = target_width * (static_cast<float>(al_get_bitmap_height(image)) / al_get_bitmap_width(image)); // 按比例縮放高度
+
+			float x = (DC->window_width - target_width) / 2; // X 軸置中
+			float y = (DC->window_height - target_height) / 2; // Y 軸置於視窗上方三分之一處
+			al_draw_scaled_bitmap(
+				image,                // 原始圖片
+				0, 0,                 // 原始圖片的左上角座標 (sx, sy)
+				al_get_bitmap_width(image),    // 原始圖片的寬度
+				al_get_bitmap_height(image),   // 原始圖片的高度
+				x, y,       // 目標位置的左上角座標
+				target_width, target_height, // 縮放到的寬度和高度
+				0                     // 標誌 (默認為 0)
+			);
+			//al_draw_bitmap(image, x, y, 0);
+			/*
+			al_draw_text(
+				FC->caviar_dreams[FontSize::LARGE], al_map_rgb(255, 255, 255),
+				DC->window_width/2., DC->window_height/2. + target_height,
+				ALLEGRO_ALIGN_CENTRE, "Press R to restart, ESC to quit.");*/
+			break;
 		} case STATE::END: {
 		}
 	}
 	al_flip_display();
 }
+
+void Game::game_restart() {
+	DataCenter *DC = DataCenter::get_instance();
+	DC->hero->init();
+	DC->map->init();
+	DC->hero->HP = 1;
+}
+
 
 Game::~Game() {
 	al_destroy_display(display);

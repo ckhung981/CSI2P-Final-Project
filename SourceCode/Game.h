@@ -18,6 +18,7 @@ public:
 	void game_init();
 	bool game_update();
 	void game_draw();
+	void game_restart();
 private:
 	/**
 	 * @brief States of the game process in game_update.
@@ -27,6 +28,7 @@ private:
 		START, // -> LEVEL
 		LEVEL, // -> PAUSE, END
 		PAUSE, // -> LEVEL
+		DIE, // -> START, END
 		END
 	};
 	STATE state;

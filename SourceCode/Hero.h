@@ -19,7 +19,11 @@ class Hero : public Object
         void init();
         void update();
         void draw();
+        void die();
+    public:
+        int HP;
     private:
+        
         float hero_width;
         float hero_height;
         HeroState state = HeroState::FRONT;
