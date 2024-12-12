@@ -4,9 +4,10 @@
 class Point;
 class Rectangle;
 class Circle;
+class Triangle;
 
 enum class ShapeType {
-	POINT, RECTANGLE, CIRCLE
+	POINT, RECTANGLE, CIRCLE, TRIANGLE 
 };
 
 /**
@@ -26,4 +27,4 @@ public:
 	virtual ~Shape() {}
 };
 
-#endif
+#endif // SHAPE_H_INCLUDED

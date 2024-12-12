@@ -7,6 +7,7 @@
 
 // Tile 圖片路徑 (可修改為您想要的圖片路徑)
 constexpr char TILE_IMAGE_PATH[] = "./assets/image/tile/red_block.png";
+constexpr char SPIKE_IMAGE_PATH[] = "./assets/image/spike/triangle_gradient_no_margin.png";
 
 // 構造函數
 Map::Map() {}
@@ -55,13 +56,17 @@ void Map::init() {
 
     // 使用 2D 陣列中的數據來創建方磚
     // 1 代表有方磚，0 代表沒有方磚
-    // 7 代表有英雄
+    // 2 代表有尖刺，7 代表英雄
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
             if (map_data[i][j] == 1) { 
                 float x = j * tile_width;
                 float y = i * tile_height;
                 DC->tiles.emplace_back(create_tile(x, y, tile_width, tile_height, TILE_IMAGE_PATH));
+            }else if (map_data[i][j] == 2){
+                float x = j * tile_width;
+                float y = i * tile_height;
+                DC->spikes.emplace_back(create_spike(x, y, tile_width, tile_height, SPIKE_IMAGE_PATH));
             }else if (map_data[i][j] == 7){
                 float x = j * tile_width;
                 float y = i * tile_height;
@@ -79,6 +84,10 @@ void Map::draw() {
         Tile &tile = *tile_ptr;
         tile.draw();
     }
+    for (auto &spike_ptr : DC->spikes) {
+        Spike &spike = *spike_ptr;
+        spike.draw();
+    }
 }
 
 // 更新整個地圖
@@ -88,9 +97,17 @@ void Map::update() {
         Tile &tile = *tile_ptr;
         tile.update();
     }
+    for (auto &spike_ptr : DC->spikes) {
+        Spike &spike = *spike_ptr;
+        spike.update();
+    }
+
 }
 
 Tile *Map::create_tile(float x, float y, float width, float height, const char* image_path) {
     return new Tile(x, y, width, height, image_path);
+}
+Spike *Map::create_spike(float x, float y, float width, float height, const char* image_path) {
+    return new Spike(x, y, width, height, image_path);
 }
 

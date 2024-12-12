@@ -15,6 +15,7 @@ class Bullet;
 class Tile;
 class Map;
 class Hero;
+class Spike;
 
 /**
  * @brief Stores generic global data and relatively small data structures.
@@ -102,6 +103,8 @@ public:
 	 * @details The map is a 2D array of tiles.
 	 * @see Tile
 	 */
+	std::vector<Spike*> spikes;
+	
 
 	Map *map;
 	Hero *hero;

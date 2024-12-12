@@ -23,7 +23,6 @@ constexpr char game_start_sound_path[] = "./assets/sound/growl.wav";
 constexpr char background_img_path[] = "";
 constexpr char background_sound_path[] = "./assets/sound/BackgroundMusic.ogg";
 
-std::vector<Tile> tiles;
 /**
  * @brief Game entry.
  * @details The function processes all allegro events and update the event state to a generic data storage (i.e. DataCenter).

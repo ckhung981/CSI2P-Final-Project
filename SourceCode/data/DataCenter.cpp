@@ -7,7 +7,7 @@
 #include "../towers/Bullet.h"
 #include "../Hero.h"
 #include "../Tile.h"
-
+#include "../Spike.h"
 
 // fixed settings
 namespace DataSetting {
@@ -47,6 +47,9 @@ DataCenter::~DataCenter() {
 	}
 	for(Tile *&t : tiles) {
 		delete &t;
+	}
+	for(Spike *&s : spikes) {
+		delete &s;
 	}
 	delete map;
 	delete hero;

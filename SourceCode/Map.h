@@ -2,6 +2,7 @@
 #define MAP_H
 
 #include "Tile.h"
+#include "Spike.h"
 #include <vector>
 
 class Map {
@@ -22,7 +23,7 @@ class Map {
 		void update();
 
 		Tile  *create_tile(float x, float y, float width, float height, const char* image_path);
-
+		Spike *create_spike(float x, float y, float width, float height, const char* image_path);
 		// hero的位置
 		float get_hero_x() const { return hero_x; }
 		float get_hero_y() const { return hero_y; }
