@@ -116,10 +116,9 @@ void Hero::update() {
     // 如果 Hero 掉到地面
     if (shape->center_y() + hero_height / 2 >= window_height) {
         // Hero回到地面，防止穿透
-        shape->update_center_y(window_height - hero_height / 2 - 0.5*scale);
-        on_ground = true;
+        die();
     }
-
+ 
     // 如果角色在平面上，重置跳躍次數
     if (on_ground) {
         velocity_y = 0; // 停止速度，角色停止下落

@@ -7,7 +7,7 @@ class Tile : public Object
 {
     public:
         // 構造函數 (建構子)
-        Tile(float x, float y, float width, float height, const char* image_path);
+        Tile(float x, float y, float width, float height, const char* image_path, int type);
 
         // 解構函數 (解構子)
         ~Tile();
@@ -29,12 +29,17 @@ class Tile : public Object
 
         //取得方塊的高度
         float get_height() const { return tile_height; }
+    public:
+        bool to_delete=false;
     private:
         ALLEGRO_BITMAP *image; // 方磚的圖片
         float tile_width;  // 這是寬度
         float tile_height; // 這是高度
         float x; // tile x 座標
         float y; // tile y 座標
+        int type;
+        bool show;
+        
 };
 
 

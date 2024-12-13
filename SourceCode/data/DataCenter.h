@@ -16,6 +16,7 @@ class Tile;
 class Map;
 class Hero;
 class Spike;
+class Portal;
 
 /**
  * @brief Stores generic global data and relatively small data structures.
@@ -31,6 +32,8 @@ public:
 		return &DC;
 	}
 	~DataCenter();
+	void reset();
+	void remove_tile();
 public:
 	double FPS;
 	int window_width, window_height;
@@ -104,6 +107,17 @@ public:
 	 * @see Tile
 	 */
 	std::vector<Spike*> spikes;
+	/**
+	 * @brief Stores the spikes of the game.
+	 * @details The spikes are the obstacles that the hero should avoid.
+	 * @see Spike
+	 */
+	std::vector<Portal*> portals;
+	/**
+	 * @brief Stores the portals of the game.
+	 * @details The portals are the objects that the hero should reach to win the game.
+	 * @see Portal
+	 */
 	
 
 	Map *map;

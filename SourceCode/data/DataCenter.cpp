@@ -1,5 +1,7 @@
 #include "DataCenter.h"
 #include <cstring>
+#include <algorithm>
+#include <iostream>
 #include "../Level.h"
 #include "../Player.h"
 #include "../monsters/Monster.h"
@@ -46,11 +48,37 @@ DataCenter::~DataCenter() {
 		delete b;
 	}
 	for(Tile *&t : tiles) {
-		delete &t;
+		delete t;
 	}
+	tiles.clear();
 	for(Spike *&s : spikes) {
-		delete &s;
+		delete s;
+	}
+	spikes.clear();
+	for(Portal *&p : portals) {
+		delete p;
 	}
 	delete map;
 	delete hero;
 }
+
+void DataCenter::reset() {
+	tiles.clear(); // 清除所有 tiles
+	spikes.clear(); // 清除所有 spikes
+	portals.clear(); // 清除所有 portals
+	// 這裡可以添加其他遊戲物件的重置操作
+}
+void DataCenter::remove_tile() {	// 移除標記為 to_delete 的 tile
+    tiles.erase(
+        std::remove_if(tiles.begin(), tiles.end(), [](Tile* tile_ptr) {
+            if (tile_ptr->to_delete) {
+				std::cout << "delete tile" << std::endl;
+                return true; // 從vector中移除
+            }
+            return false; // 不刪除這個元素
+        }),
+        tiles.end() // remove_if 返回新的 vector 末尾
+    );
+}
+
+		

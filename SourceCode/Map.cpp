@@ -1,5 +1,8 @@
 #include "Map.h"
 #include "Tile.h"
+#include "Spike.h"
+#include "Portal.h"
+#include "Hero.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -8,6 +11,18 @@
 // Tile 圖片路徑 (可修改為您想要的圖片路徑)
 constexpr char TILE_IMAGE_PATH[] = "./assets/image/tile/red_block.png";
 constexpr char SPIKE_IMAGE_PATH[] = "./assets/image/spike/triangle_gradient_no_margin.png";
+constexpr char PORTAL_IMAGE_PATH[] = "./assets/image/portal/exit_2.png";
+enum block_state{
+    EMPTY, //0
+    TILE, //1
+    SPIKE, //2
+    TRIGER, //3
+    EMPTY_TILE, //4
+    TILE_EMPTY, //5
+    TILE_EMPTY_SPIKE,//6
+    PORTAL, //7
+    HERO //8
+};
 
 // 構造函數
 Map::Map() {}
@@ -40,12 +55,13 @@ void Map::init() {
         map_data.push_back(row_data);
     }
     file.close();
+    /*
     for (const auto& row : map_data) {
     for (const auto& cell : row) {
         std::cout << cell << " ";
     }
     std::cout << std::endl;
-}
+    }*/
     int rows = map_data.size();
     int cols = map_data[0].size();
 
@@ -55,23 +71,35 @@ void Map::init() {
     float tile_height = static_cast<float>(window_height) / rows;
 
     // 使用 2D 陣列中的數據來創建方磚
-    // 1 代表有方磚，0 代表沒有方磚
-    // 2 代表有尖刺，7 代表英雄
+
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-            if (map_data[i][j] == 1) { 
-                float x = j * tile_width;
-                float y = i * tile_height;
-                DC->tiles.emplace_back(create_tile(x, y, tile_width, tile_height, TILE_IMAGE_PATH));
-            }else if (map_data[i][j] == 2){
-                float x = j * tile_width;
-                float y = i * tile_height;
-                DC->spikes.emplace_back(create_spike(x, y, tile_width, tile_height, SPIKE_IMAGE_PATH));
-            }else if (map_data[i][j] == 7){
-                float x = j * tile_width;
-                float y = i * tile_height;
-                this->hero_x = x;
-                this->hero_y = y;
+            switch(map_data[i][j]){
+                case block_state::EMPTY:
+                    break;
+                case block_state::TILE:
+                    DC->tiles.emplace_back(create_tile(j * tile_width, i * tile_height, tile_width, tile_height, TILE_IMAGE_PATH, block_state::TILE));
+                    break;
+                case block_state::SPIKE:
+                    DC->spikes.emplace_back(create_spike(j * tile_width, i * tile_height, tile_width, tile_height, SPIKE_IMAGE_PATH));
+                    break;
+                case block_state::TRIGER:
+                    break;
+                case block_state::EMPTY_TILE:
+                    DC->tiles.emplace_back(create_tile(j * tile_width, i * tile_height, tile_width, tile_height, TILE_IMAGE_PATH, block_state::EMPTY_TILE));
+                    break;
+                case block_state::TILE_EMPTY:
+                    DC->tiles.emplace_back(create_tile(j * tile_width, i * tile_height, tile_width, tile_height, TILE_IMAGE_PATH, block_state::TILE_EMPTY));
+                    break;
+                case block_state::TILE_EMPTY_SPIKE:
+                    break;
+                case block_state::PORTAL:
+                    DC->portals.emplace_back(create_portal(j * tile_width, i * tile_height, tile_width, tile_height, PORTAL_IMAGE_PATH));
+                    break;
+                case block_state::HERO:
+                    this->hero_x = j * tile_width;
+                    this->hero_y = i * tile_height;
+                    break;
             }
         }
     }
@@ -88,6 +116,10 @@ void Map::draw() {
         Spike &spike = *spike_ptr;
         spike.draw();
     }
+    for (auto &portal_ptr : DC->portals) {
+        Portal &portal = *portal_ptr;
+        portal.draw();
+    }
 }
 
 // 更新整個地圖
@@ -101,13 +133,21 @@ void Map::update() {
         Spike &spike = *spike_ptr;
         spike.update();
     }
+    for (auto &portal_ptr : DC->portals) {
+        Portal &portal = *portal_ptr;
+        portal.update();
+    }
+    DC->remove_tile();   
 
 }
 
-Tile *Map::create_tile(float x, float y, float width, float height, const char* image_path) {
-    return new Tile(x, y, width, height, image_path);
+Tile *Map::create_tile(float x, float y, float width, float height, const char* image_path, int type) {
+    return new Tile(x, y, width, height, image_path, type);
 }
 Spike *Map::create_spike(float x, float y, float width, float height, const char* image_path) {
     return new Spike(x, y, width, height, image_path);
+}
+Portal *Map::create_portal(float x, float y, float width, float height, const char* image_path) {
+    return new Portal(x, y, width, height, image_path);
 }
 

@@ -316,6 +316,7 @@ Game::game_draw() {
 
 void Game::game_restart() {
 	DataCenter *DC = DataCenter::get_instance();
+	DC->reset();
 	DC->hero->init();
 	DC->map->init();
 	DC->hero->HP = 1;
