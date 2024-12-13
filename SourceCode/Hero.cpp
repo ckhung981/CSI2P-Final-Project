@@ -204,15 +204,17 @@ void Hero::draw(){
     );
     //==================================================================================================
     //for debug
-    // 繪製邊框 (以矩形為例)
-    al_draw_rectangle(
-        shape->center_x() - this->hero_width / 2, 
-        shape->center_y() - this->hero_height / 2,
-        shape->center_x() + this->hero_width / 2, 
-        shape->center_y() + this->hero_height / 2,
-        al_map_rgb(255, 0, 0), // 紅色邊框
-        2                      // 邊框寬度
-    );
+    if (DC->debug_mode) {
+        // 繪製邊框 (以矩形為例)
+        al_draw_rectangle(
+            shape->center_x() - this->hero_width / 2, 
+            shape->center_y() - this->hero_height / 2,
+            shape->center_x() + this->hero_width / 2, 
+            shape->center_y() + this->hero_height / 2,
+            al_map_rgb(255, 0, 0), // 紅色邊框
+            2                      // 邊框寬度
+        );
+    }
     //==================================================================================================
 }    
 

@@ -29,6 +29,8 @@ class Portal : public Object
 
         //取得方塊的高度
         float get_height() const { return portal_height; }
+
+        
     private:
         ALLEGRO_BITMAP *image; // 物件圖片
         float portal_width;  // 寬度
@@ -38,4 +40,4 @@ class Portal : public Object
 };
 
 
-#endif // PORTAL_H_INCLUDED
+#endif // PORTAL_H_INCLUDEDad

@@ -74,7 +74,6 @@ void DataCenter::remove_tile() {	// 移除標記為 to_delete 的 tile
     tiles.erase(
         std::remove_if(tiles.begin(), tiles.end(), [](Tile* tile_ptr) {
             if (tile_ptr->to_delete) {
-				std::cout << "delete tile" << std::endl;
                 return true; // 從vector中移除
             }
             return false; // 不刪除這個元素

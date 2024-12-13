@@ -35,6 +35,8 @@ public:
 	void reset();
 	void remove_tile();
 public:
+	bool debug_mode = false;
+	bool is_win = false;
 	double scale;
 	double FPS;
 	int window_width, window_height;

@@ -22,7 +22,10 @@
 constexpr char game_icon_img_path[] = "./assets/image/game_icon.png";
 constexpr char game_start_sound_path[] = "./assets/sound/growl.wav";
 constexpr char background_img_path[] = "";
-constexpr char background_sound_path[] = "./assets/sound/BackgroundMusic.ogg";
+//constexpr char background_sound_path[] = "./assets/sound/BackgroundMusic.ogg";
+constexpr char background_sound_path[] = "./assets/sound/BGM.mp3";
+constexpr char game_over_sound_path[] = "./assets/sound/die_1.MP3";
+constexpr char game_win_sound_path[] = "./assets/sound/win.mp3";
 
 /**
  * @brief Game entry.
@@ -164,6 +167,8 @@ Game::game_update() {
 	OperationCenter *OC = OperationCenter::get_instance();
 	SoundCenter *SC = SoundCenter::get_instance();
 	static ALLEGRO_SAMPLE_INSTANCE *background = nullptr;
+	static ALLEGRO_SAMPLE_INSTANCE *gameover = nullptr;
+	static ALLEGRO_SAMPLE_INSTANCE *win = nullptr;
 
 	switch(state) {
 		case STATE::START: {
@@ -201,6 +206,13 @@ Game::game_update() {
 				debug_log("<Game> state: change to DIE\n");
 				state = STATE::DIE;
 			}
+
+			if (DC->is_win) {
+				debug_log("<Game> state: change to END\n");
+
+				state = STATE::WIN;
+			}
+
 			break;
 		} case STATE::PAUSE: {
 			if(DC->key_state[ALLEGRO_KEY_P] && !DC->prev_key_state[ALLEGRO_KEY_P]) {
@@ -210,12 +222,32 @@ Game::game_update() {
 			}
 			break;
 		} case STATE::DIE: {
-
+			static bool is_die_music_played = false; 
+			if (!is_die_music_played) {
+				SC->toggle_playing(background); // 停止背景音樂
+				gameover = SC->play(game_over_sound_path, ALLEGRO_PLAYMODE_LOOP); // 循環播放死亡音樂
+				is_die_music_played = true; 
+			}
 			if(DC->key_state[ALLEGRO_KEY_R] && !DC->prev_key_state[ALLEGRO_KEY_R]) {
+				SC->toggle_playing(gameover);
+				SC->toggle_playing(background);
 				debug_log("<Game> state: change to START\n");
 				game_restart();
 				state = STATE::START;
+				is_die_music_played = false;
 			} else if(DC->key_state[ALLEGRO_KEY_ESCAPE] && !DC->prev_key_state[ALLEGRO_KEY_ESCAPE]) {
+				debug_log("<Game> state: change to END\n");
+				state = STATE::END;
+			}
+			break;
+		} case STATE::WIN: {
+			static bool is_win_music_played = false; 
+			if (!is_win_music_played) {
+				SC->toggle_playing(background); // 停止背景音樂
+				win = SC->play(game_win_sound_path, ALLEGRO_PLAYMODE_LOOP); // 循環播放勝利音樂
+				is_win_music_played = true; 
+			}
+			if (DC->key_state[ALLEGRO_KEY_ESCAPE] && !DC->prev_key_state[ALLEGRO_KEY_ESCAPE]) {
 				debug_log("<Game> state: change to END\n");
 				state = STATE::END;
 			}
@@ -308,6 +340,25 @@ Game::game_draw() {
 				DC->window_width/2., DC->window_height/2. + target_height,
 				ALLEGRO_ALIGN_CENTRE, "Press R to restart, ESC to quit.");*/
 			break;
+		} case STATE::WIN: {
+			ImageCenter *IC = ImageCenter::get_instance();
+			ALLEGRO_BITMAP *image = IC->get("./assets/image/win.png");
+			// 計算繪製位置，將其置中
+			float target_width = DC->window_width * 0.8;  // 讓圖片寬度為視窗的 80%
+			float target_height = target_width * (static_cast<float>(al_get_bitmap_height(image)) / al_get_bitmap_width(image)); // 按比例縮放高度
+
+			float x = (DC->window_width - target_width) / 2; // X 軸置中
+			float y = (DC->window_height - target_height) / 2; // Y 軸置於視窗上方三分之一處
+			al_draw_scaled_bitmap(
+				image,                // 原始圖片
+				0, 0,                 // 原始圖片的左上角座標 (sx, sy)
+				al_get_bitmap_width(image),    // 原始圖片的寬度
+				al_get_bitmap_height(image),   // 原始圖片的高度
+				x, y,       // 目標位置的左上角座標
+				target_width, target_height, // 縮放到的寬度和高度
+				0                     // 標誌 (默認為 0)
+			);
+			break;	
 		} case STATE::END: {
 		}
 	}

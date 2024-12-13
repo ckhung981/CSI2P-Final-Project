@@ -29,6 +29,7 @@ private:
 		LEVEL, // -> PAUSE, END
 		PAUSE, // -> LEVEL
 		DIE, // -> START, END
+		WIN, // -> START, END
 		END
 	};
 	STATE state;

@@ -31,7 +31,8 @@ class Spike : public Object
         float x; // tile x 座標
         float y; // tile y 座標
         int type;
-        bool detected = false;
+        bool detected;
+        bool is_played;
 };
 
 

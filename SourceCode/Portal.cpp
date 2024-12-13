@@ -37,7 +37,7 @@ void Portal::update() {
     //偵測角色碰撞
     DataCenter *DC = DataCenter::get_instance();
     if (shape->overlap(*DC->hero->shape)) {
-        //TODO 回傳通關
+        DC->is_win = true;
     }
 }
 
@@ -57,12 +57,15 @@ void Portal::draw() {
     
     //==================================================================================================
     //for debug
-    // 繪製方磚邊框
-    al_draw_rectangle(
-        left(), top(), right(), bottom(),
-        al_map_rgb(255, 0, 0), // 邊框顏色 (紅色)
-        2                      // 邊框寬度
-    );
+    DataCenter *DC = DataCenter::get_instance();
+    if (DC->debug_mode) {
+        // 繪製方磚邊框
+        al_draw_rectangle(
+            left(), top(), right(), bottom(),
+            al_map_rgb(255, 0, 0), // 邊框顏色 (紅色)
+            2                      // 邊框寬度
+        );
+    }
     //==================================================================================================
     
 }
