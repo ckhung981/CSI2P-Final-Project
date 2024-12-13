@@ -14,6 +14,7 @@
 // fixed settings
 namespace DataSetting {
 	constexpr double FPS = 60;
+	float origin_window_width = 800;
 	constexpr int window_width = 1200;
 	constexpr int window_height = 900;
 	constexpr int game_field_length = 900;
@@ -29,6 +30,7 @@ DataCenter::DataCenter() {
 	mouse = Point(0, 0);
 	memset(mouse_state, false, sizeof(mouse_state));
 	memset(prev_mouse_state, false, sizeof(prev_mouse_state));
+	scale = this->window_width / DataSetting::origin_window_width;
 	player = new Player();
 	level = new Level();
 	hero = new Hero();

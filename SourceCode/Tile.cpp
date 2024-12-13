@@ -50,7 +50,12 @@ void Tile::update() {
             to_delete = true;
         }
     }
-    else if (type == 6) return;
+    else if (type == 6) {
+        if (shape->overlap(*DC->hero->shape)) {
+            show = false;
+            to_delete = true;
+        }
+    };
 
 }
 

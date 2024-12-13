@@ -22,10 +22,15 @@ class Hero : public Object
         void die();
     public:
         int HP;
-    private:
-        
         float hero_width;
         float hero_height;
+        // ====== 物理系統參數 ======
+        float velocity_y;// 垂直速度
+        float gravity ;// 重力加速度 (可以根據需要調整)
+        float jump_speed;// 跳躍時的初速度 
+        const int max_jumps = 2; // 最大跳躍次數
+    private:
+        
         HeroState state = HeroState::FRONT;
         double speed = 5;
         std::map<HeroState, std::string> gif_path;

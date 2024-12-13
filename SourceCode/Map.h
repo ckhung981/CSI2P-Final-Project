@@ -24,7 +24,7 @@ class Map {
 		void update();
 
 		Tile  *create_tile(float x, float y, float width, float height, const char* image_path, int type);
-		Spike *create_spike(float x, float y, float width, float height, const char* image_path);
+		Spike *create_spike(float x, float y, float width, float height, const char* image_path, int type);
 		Portal *create_portal(float x, float y, float width, float height, const char* image_path);
 
 		// hero的位置

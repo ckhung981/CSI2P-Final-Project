@@ -35,6 +35,7 @@ public:
 	void reset();
 	void remove_tile();
 public:
+	double scale;
 	double FPS;
 	int window_width, window_height;
 	/**

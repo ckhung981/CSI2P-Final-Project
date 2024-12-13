@@ -8,8 +8,8 @@
 #include <cstdio>
 
 // 構造函數 (初始化位置、大小和載入圖片)
-Spike::Spike(float x, float y, float width, float height, const char* image_path) 
-    : x(x), y(y), tile_width(width), tile_height(height) // 初始化成員變量
+Spike::Spike(float x, float y, float width, float height, const char* image_path, int type) 
+    : x(x), y(y), tile_width(width), tile_height(height), type(type) // 初始化成員變量
 {
     shape.reset(new Triangle{
         x, y + height,
@@ -39,6 +39,26 @@ void Spike::update() {
     if (shape->overlap(*DC->hero->shape)) {
         DC->hero->die();
     }
+    if (type == 2) return;
+    else if (type == 9) // Hero位在偵測範圍內的話尖刺會移動
+    {   
+
+        if ((DC->hero->shape->center_x() + DC->hero->hero_width / 2) >= this->shape->center_x() &&
+            (DC->hero->shape->center_x() - DC->hero->hero_width / 2) <= this->shape->center_x()) {
+            if (DC->hero->shape->center_y() < this->y &&
+                DC->hero->shape->center_y() > this->y - 6*this->tile_height) {
+
+                detected = true;
+            }
+        }  
+
+        if (detected){
+            this->y += DC->hero->jump_speed;
+            this->shape->update_center_y(this->y + this->tile_height / 2);
+        }
+        
+    }
+
 }
 
 // 繪製尖刺的圖片
@@ -51,7 +71,7 @@ void Spike::draw() {
         0, 0,                 // 原始圖片的左上角座標 (sx, sy)
         al_get_bitmap_width(image),    // 原始圖片的寬度
         al_get_bitmap_height(image),   // 原始圖片的高度
-        x, y,       // 目標位置的左上角座標
+        shape->center_x() - tile_width / 2, shape->center_y() - tile_height / 2,   // 目標位置的左上角座標
         tile_width, tile_height, // 縮放到的寬度和高度
         0                     // 標誌 (默認為 0)
     );
@@ -78,6 +98,18 @@ void Spike::draw() {
         al_map_rgb(0, 0, 255),
         2
     );
+    //==================================================================================================
+    //==================================================================================================
+        //for debug
+        if (type == 9) {
+            // 繪製方磚邊框
+        al_draw_rectangle(
+            x, y,
+            x + tile_width, y - 6* tile_height,
+            al_map_rgb(255, 0, 0), // 紅色邊框
+            2                      // 邊框寬度
+        );
+       }
     //==================================================================================================
     
 }

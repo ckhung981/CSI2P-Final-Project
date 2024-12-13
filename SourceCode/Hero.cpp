@@ -39,8 +39,12 @@ void Hero::init(){
         map->get_hero_x() + hero_width ,
         map->get_hero_y() + hero_height
     });
-
-    HP = 1;
+    // ====== 物理系統參數 ======
+        velocity_y = 0.0f * DC->scale ;   // 垂直速度
+        gravity = 0.5f * DC->scale;       // 重力加速度 (可以根據需要調整)
+        jump_speed = -10.0f * DC->scale;  // 跳躍時的初速度 
+    // ====== 角色狀態 ======
+        HP = 1;
 
 }
 void Hero::update() {
@@ -63,21 +67,13 @@ void Hero::update() {
     float hero_left = current_x - hero_width / 2;
     float hero_right = current_x + hero_width / 2;
 
-
     // 取得視窗大小
     float window_width = DC->window_width;
     float window_height = DC->window_height;
-    float origin_window_width = 800;
-    float scale = DC->window_width / origin_window_width;
 
-    // ====== 物理系統參數 ======
-    static float velocity_y = 0.0f *scale;   // 垂直速度
-    const float gravity = 0.5f * scale;       // 重力加速度 (可以根據需要調整)
-    const float jump_speed = -10.0f * scale;  // 跳躍時的初速度
     bool on_ground = (current_y + hero_height / 2 >= window_height); // 檢查角色是否在地面
     static int jump_count = 0;      // 記錄跳躍次數
-    const int max_jumps = 2; // 最大跳躍次數
-    // ============================
+   
 
     // 角色受重力影響，下落速度增加
     velocity_y += gravity;

@@ -21,7 +21,8 @@ enum block_state{
     TILE_EMPTY, //5
     TILE_EMPTY_SPIKE,//6
     PORTAL, //7
-    HERO //8
+    HERO, //8
+    MOVE_SPIKE //9
 };
 
 // 構造函數
@@ -81,7 +82,7 @@ void Map::init() {
                     DC->tiles.emplace_back(create_tile(j * tile_width, i * tile_height, tile_width, tile_height, TILE_IMAGE_PATH, block_state::TILE));
                     break;
                 case block_state::SPIKE:
-                    DC->spikes.emplace_back(create_spike(j * tile_width, i * tile_height, tile_width, tile_height, SPIKE_IMAGE_PATH));
+                    DC->spikes.emplace_back(create_spike(j * tile_width, i * tile_height, tile_width, tile_height, SPIKE_IMAGE_PATH, block_state::SPIKE));
                     break;
                 case block_state::TRIGER:
                     break;
@@ -92,6 +93,8 @@ void Map::init() {
                     DC->tiles.emplace_back(create_tile(j * tile_width, i * tile_height, tile_width, tile_height, TILE_IMAGE_PATH, block_state::TILE_EMPTY));
                     break;
                 case block_state::TILE_EMPTY_SPIKE:
+                    DC->tiles.emplace_back(create_tile(j * tile_width, i * tile_height, tile_width, tile_height, TILE_IMAGE_PATH, block_state::TILE_EMPTY_SPIKE));
+                    DC->spikes.emplace_back(create_spike(j * tile_width, i * tile_height, tile_width, tile_height, SPIKE_IMAGE_PATH, block_state::TILE_EMPTY_SPIKE));
                     break;
                 case block_state::PORTAL:
                     DC->portals.emplace_back(create_portal(j * tile_width, i * tile_height, tile_width, tile_height, PORTAL_IMAGE_PATH));
@@ -99,6 +102,9 @@ void Map::init() {
                 case block_state::HERO:
                     this->hero_x = j * tile_width;
                     this->hero_y = i * tile_height;
+                    break;
+                case block_state::MOVE_SPIKE:
+                    DC->spikes.emplace_back(create_spike(j * tile_width, i * tile_height, tile_width, tile_height, SPIKE_IMAGE_PATH, block_state::MOVE_SPIKE));
                     break;
             }
         }
@@ -108,10 +114,6 @@ void Map::init() {
 // 繪製所有的方磚
 void Map::draw() {
     DataCenter *DC = DataCenter::get_instance();
-    for (auto &tile_ptr : DC->tiles) {
-        Tile &tile = *tile_ptr;
-        tile.draw();
-    }
     for (auto &spike_ptr : DC->spikes) {
         Spike &spike = *spike_ptr;
         spike.draw();
@@ -119,6 +121,10 @@ void Map::draw() {
     for (auto &portal_ptr : DC->portals) {
         Portal &portal = *portal_ptr;
         portal.draw();
+    }
+        for (auto &tile_ptr : DC->tiles) {
+        Tile &tile = *tile_ptr;
+        tile.draw();
     }
 }
 
@@ -144,8 +150,8 @@ void Map::update() {
 Tile *Map::create_tile(float x, float y, float width, float height, const char* image_path, int type) {
     return new Tile(x, y, width, height, image_path, type);
 }
-Spike *Map::create_spike(float x, float y, float width, float height, const char* image_path) {
-    return new Spike(x, y, width, height, image_path);
+Spike *Map::create_spike(float x, float y, float width, float height, const char* image_path, int type) {
+    return new Spike(x, y, width, height, image_path, type);
 }
 Portal *Map::create_portal(float x, float y, float width, float height, const char* image_path) {
     return new Portal(x, y, width, height, image_path);
