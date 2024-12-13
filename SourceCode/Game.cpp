@@ -204,6 +204,7 @@ Game::game_update() {
 			}*/
 			if(DC->hero->HP == 0) {
 				debug_log("<Game> state: change to DIE\n");
+				DC->death_count++;
 				state = STATE::DIE;
 			}
 
@@ -306,6 +307,12 @@ Game::game_draw() {
 	switch(state) {
 		case STATE::START: {
 		} case STATE::LEVEL: {
+			char buffer[100];
+			sprintf(buffer, "Death count = %d", DC->death_count);
+			al_draw_text(
+				FC->caviar_dreams[FontSize::LARGE], al_map_rgb(255, 255, 255),
+				0, 0,
+				ALLEGRO_ALIGN_LEFT, buffer);
 			break;
 		} case STATE::PAUSE: {
 			// game layout cover
@@ -313,7 +320,7 @@ Game::game_draw() {
 			al_draw_text(
 				FC->caviar_dreams[FontSize::LARGE], al_map_rgb(255, 255, 255),
 				DC->window_width/2., DC->window_height/2.,
-				ALLEGRO_ALIGN_CENTRE, "GAME PAUSED");
+				ALLEGRO_ALIGN_CENTRE, "GAME PAUSED (Press P to resume)");
 			break;
 		} case STATE::DIE: {
 			ImageCenter *IC = ImageCenter::get_instance();
@@ -333,12 +340,12 @@ Game::game_draw() {
 				target_width, target_height, // 縮放到的寬度和高度
 				0                     // 標誌 (默認為 0)
 			);
-			//al_draw_bitmap(image, x, y, 0);
-			/*
+			char buffer[100];
+			sprintf(buffer, "Death count = %d", DC->death_count);
 			al_draw_text(
 				FC->caviar_dreams[FontSize::LARGE], al_map_rgb(255, 255, 255),
-				DC->window_width/2., DC->window_height/2. + target_height,
-				ALLEGRO_ALIGN_CENTRE, "Press R to restart, ESC to quit.");*/
+				0, 0,
+				ALLEGRO_ALIGN_LEFT, buffer);
 			break;
 		} case STATE::WIN: {
 			ImageCenter *IC = ImageCenter::get_instance();
@@ -358,6 +365,14 @@ Game::game_draw() {
 				target_width, target_height, // 縮放到的寬度和高度
 				0                     // 標誌 (默認為 0)
 			);
+			char buffer[100];
+			sprintf(buffer, "Death count = %d", DC->death_count);
+			al_draw_text(
+				FC->caviar_dreams[FontSize::LARGE], al_map_rgb(255, 255, 255),
+				0, 0,
+				ALLEGRO_ALIGN_LEFT, buffer);
+			break;
+
 			break;	
 		} case STATE::END: {
 		}
