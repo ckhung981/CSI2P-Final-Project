@@ -1,6 +1,6 @@
 #ifndef TILE_H_INCLUDED
 #define TILE_H_INCLUDED
-#include "Object.h"
+#include "../Object.h"
 #include <string>
 #include <allegro5/allegro.h>
 class Tile : public Object 

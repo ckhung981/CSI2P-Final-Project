@@ -1,8 +1,8 @@
 #include "Portal.h"
-#include "Hero.h"
-#include "data/DataCenter.h"
-#include "data/ImageCenter.h"
-#include "shapes/Rectangle.h"
+#include "../Hero.h"
+#include "../data/DataCenter.h"
+#include "../data/ImageCenter.h"
+#include "../shapes/Rectangle.h"
 #include <allegro5/allegro_primitives.h>
 #include <iostream>
 #include <cstdio>

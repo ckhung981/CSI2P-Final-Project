@@ -1,6 +1,6 @@
 #ifndef PORTAL_H_INCLUDED
 #define PORTAL_H_INCLUDED
-#include "Object.h"
+#include "../Object.h"
 #include <string>
 #include <allegro5/allegro.h>
 class Portal : public Object 

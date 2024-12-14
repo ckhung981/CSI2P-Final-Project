@@ -2,14 +2,10 @@
 #include <cstring>
 #include <algorithm>
 #include <iostream>
-#include "../Level.h"
 #include "../Player.h"
-#include "../monsters/Monster.h"
-#include "../towers/Tower.h"
-#include "../towers/Bullet.h"
 #include "../Hero.h"
-#include "../Tile.h"
-#include "../Spike.h"
+#include "../map_items/Tile.h"
+#include "../map_items/Spike.h"
 
 // fixed settings
 namespace DataSetting {
@@ -32,31 +28,19 @@ DataCenter::DataCenter() {
 	memset(prev_mouse_state, false, sizeof(prev_mouse_state));
 	scale = this->window_width / DataSetting::origin_window_width;
 	player = new Player();
-	level = new Level();
 	hero = new Hero();
 	map = new Map();
 }
 
 DataCenter::~DataCenter() {
+	reset();
 	delete player;
-	delete level;
-	for(Monster *&m : monsters) {
-		delete m;
-	}
-	for(Tower *&t : towers) {
-		delete t;
-	}
-	for(Bullet *&b : towerBullets) {
-		delete b;
-	}
 	for(Tile *&t : tiles) {
 		delete t;
 	}
-	tiles.clear();
 	for(Spike *&s : spikes) {
 		delete s;
 	}
-	spikes.clear();
 	for(Portal *&p : portals) {
 		delete p;
 	}

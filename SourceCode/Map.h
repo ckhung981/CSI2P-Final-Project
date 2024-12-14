@@ -1,9 +1,9 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "Tile.h"
-#include "Spike.h"
-#include "Portal.h"
+#include "map_items/Portal.h"
+#include "map_items/Tile.h"
+#include "map_items/Spike.h"
 #include <vector>
 
 class Map {

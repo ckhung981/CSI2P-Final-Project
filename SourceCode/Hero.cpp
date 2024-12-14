@@ -4,7 +4,7 @@
 #include "shapes/Rectangle.h"
 #include <allegro5/allegro_primitives.h>
 #include "Map.h"
-#include "Tile.h"
+#include "map_items/Tile.h"
 #include <cstdio>
 #include <iostream>
 namespace HeroSetting {

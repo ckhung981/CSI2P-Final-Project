@@ -7,11 +7,8 @@ public:
 	Player();
 	void update();
 	int HP;
-	int coin;
 private:
-	int coin_freq;
-	int coin_increase;
-	int coin_counter;
+
 };
 
 #endif

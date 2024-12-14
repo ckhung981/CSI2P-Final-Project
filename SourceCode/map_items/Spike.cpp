@@ -1,9 +1,9 @@
 #include "Spike.h"
-#include "Hero.h"
-#include "data/DataCenter.h"
-#include "data/ImageCenter.h"
-#include "data/SoundCenter.h"
-#include "shapes/Triangle.h"
+#include "../Hero.h"
+#include "../data/DataCenter.h"
+#include "../data/ImageCenter.h"
+#include "../data/SoundCenter.h"
+#include "../shapes/Triangle.h"
 #include <allegro5/allegro_primitives.h>
 #include <iostream>
 #include <cstdio>

@@ -6,7 +6,6 @@
 #include "data/ImageCenter.h"
 #include "data/FontCenter.h"
 #include "Player.h"
-#include "Level.h"
 #include "Hero.h"
 #include "Map.h"
 #include <allegro5/allegro_primitives.h>
@@ -136,10 +135,6 @@ Game::game_init() {
 	// init map setting
 	DC->map->init();
 
-	ui = new UI();
-	ui->init();
-
-	//DC->level->init();
 	DC->hero->init();
 	
 
@@ -172,18 +167,10 @@ Game::game_update() {
 
 	switch(state) {
 		case STATE::START: {
-			static bool is_played = false;
-			static ALLEGRO_SAMPLE_INSTANCE *instance = nullptr;
-			if(!is_played) {
-				instance = SC->play(game_start_sound_path, ALLEGRO_PLAYMODE_ONCE);
-				//DC->level->load_level(1);
-				is_played = true;
-			}
-
-			if(!SC->is_playing(instance)) {
-				debug_log("<Game> state: change to LEVEL\n");
-				state = STATE::LEVEL;
-			}
+			
+			debug_log("<Game> state: change to LEVEL\n");
+			state = STATE::LEVEL;
+			
 			break;
 		} case STATE::LEVEL: {
 			static bool BGM_played = false;
@@ -266,7 +253,6 @@ Game::game_update() {
 			DC->hero->update();
 		}
 		if(state != STATE::START) {
-			//DC->level->update();
 			OC->update();
 		}
 	}
@@ -297,11 +283,8 @@ Game::game_draw() {
 		}
 		// user interface
 		if(state != STATE::START) {
-			//DC->level->draw();
 			DC->map->draw();
 			DC->hero->draw();
-			//ui->draw();
-			//OC->draw();
 		}
 	}
 	switch(state) {

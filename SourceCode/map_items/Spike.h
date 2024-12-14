@@ -1,6 +1,6 @@
 #ifndef SPIKE_H_INCLUDED
 #define SPIKE_H_INCLUDED
-#include "Object.h"
+#include "../Object.h"
 #include <string>
 #include <allegro5/allegro.h>
 

@@ -1,17 +1,21 @@
 #include "Map.h"
-#include "Tile.h"
-#include "Spike.h"
-#include "Portal.h"
+#include "map_items/Tile.h"
+#include "map_items/Spike.h"
+#include "map_items/Portal.h"
 #include "Hero.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
 #include "data/DataCenter.h"
 
-// Tile 圖片路徑 (可修改為您想要的圖片路徑)
+// 圖片路徑 
 constexpr char TILE_IMAGE_PATH[] = "./assets/image/tile/red_block.png";
 constexpr char SPIKE_IMAGE_PATH[] = "./assets/image/spike/triangle_gradient_no_margin.png";
 constexpr char PORTAL_IMAGE_PATH[] = "./assets/image/portal/exit_2.png";
+
+//地圖路徑
+constexpr char MAP_PATH[] = "./assets/map/tile_based_map_dynamic.csv";
+
 enum block_state{
     EMPTY, //0
     TILE, //1
@@ -33,7 +37,7 @@ Map::Map() {}
 void Map::init() {
 	DataCenter *DC = DataCenter::get_instance();
 
-    std::ifstream file("./assets/map/tile_based_map_dynamic.csv"); // 指定 CSV 文件的路徑
+    std::ifstream file(MAP_PATH); // 指定 CSV 文件的路徑
     if (!file.is_open()) {
         std::cerr << "Error: Could not open map CSV file." << std::endl;
     }
@@ -56,13 +60,7 @@ void Map::init() {
         map_data.push_back(row_data);
     }
     file.close();
-    /*
-    for (const auto& row : map_data) {
-    for (const auto& cell : row) {
-        std::cout << cell << " ";
-    }
-    std::cout << std::endl;
-    }*/
+    
     int rows = map_data.size();
     int cols = map_data[0].size();
 

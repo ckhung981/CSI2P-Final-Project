@@ -1,8 +1,8 @@
 #include "Tile.h"
-#include "Hero.h"
-#include "data/DataCenter.h"
-#include "data/ImageCenter.h"
-#include "shapes/Rectangle.h"
+#include "../Hero.h"
+#include "../data/DataCenter.h"
+#include "../data/ImageCenter.h"
+#include "../shapes/Rectangle.h"
 #include <iostream>
 #include <cstdio>
 
