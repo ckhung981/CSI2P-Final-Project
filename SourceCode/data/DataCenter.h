@@ -37,6 +37,7 @@ public:
 public:
 	bool debug_mode = false;
 	bool is_win = false;
+	bool is_in_start = true;
 	int death_count = 0;
 	double scale;
 	double FPS;

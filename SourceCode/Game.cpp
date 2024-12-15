@@ -19,12 +19,12 @@
 
 // fixed settings
 constexpr char game_icon_img_path[] = "./assets/image/game_icon.png";
-constexpr char game_start_sound_path[] = "./assets/sound/growl.wav";
 constexpr char background_img_path[] = "";
 //constexpr char background_sound_path[] = "./assets/sound/BackgroundMusic.ogg";
 constexpr char background_sound_path[] = "./assets/sound/BGM.mp3";
 constexpr char game_over_sound_path[] = "./assets/sound/die_1.MP3";
 constexpr char game_win_sound_path[] = "./assets/sound/win.mp3";
+constexpr char game_start_sound_path[] = "./assets/sound/BGM_gamestart.mp3";
 
 /**
  * @brief Game entry.
@@ -162,15 +162,25 @@ Game::game_update() {
 	OperationCenter *OC = OperationCenter::get_instance();
 	SoundCenter *SC = SoundCenter::get_instance();
 	static ALLEGRO_SAMPLE_INSTANCE *background = nullptr;
+	static ALLEGRO_SAMPLE_INSTANCE *game_start = nullptr;
 	static ALLEGRO_SAMPLE_INSTANCE *gameover = nullptr;
 	static ALLEGRO_SAMPLE_INSTANCE *win = nullptr;
 
 	switch(state) {
-		case STATE::START: {
-			
-			debug_log("<Game> state: change to LEVEL\n");
-			state = STATE::LEVEL;
-			
+		case STATE::START: {			
+			static bool BGM_played = false;
+			if(!BGM_played) {
+				game_start = SC->play(game_start_sound_path, ALLEGRO_PLAYMODE_LOOP);
+				BGM_played = true;
+			}
+			if (DC->is_win) {
+				debug_log("<Game> state: change to LEVEL\n");
+				state = STATE::LEVEL;
+				DC->is_win = false;
+				DC->is_in_start = false;	
+				SC->toggle_playing(game_start);
+				game_restart();
+			}
 			break;
 		} case STATE::LEVEL: {
 			static bool BGM_played = false;
@@ -184,11 +194,6 @@ Game::game_update() {
 				debug_log("<Game> state: change to PAUSE\n");
 				state = STATE::PAUSE;
 			}
-			/*
-			if(DC->level->remain_monsters() == 0 && DC->monsters.size() == 0) {
-				debug_log("<Game> state: change to END\n");
-				state = STATE::END;
-			}*/
 			if(DC->hero->HP == 0) {
 				debug_log("<Game> state: change to DIE\n");
 				DC->death_count++;
@@ -221,7 +226,7 @@ Game::game_update() {
 				SC->toggle_playing(background);
 				debug_log("<Game> state: change to START\n");
 				game_restart();
-				state = STATE::START;
+				state = STATE::LEVEL;
 				is_die_music_played = false;
 			} else if(DC->key_state[ALLEGRO_KEY_ESCAPE] && !DC->prev_key_state[ALLEGRO_KEY_ESCAPE]) {
 				debug_log("<Game> state: change to END\n");
@@ -268,7 +273,6 @@ Game::game_update() {
 void
 Game::game_draw() {
 	DataCenter *DC = DataCenter::get_instance();
-	OperationCenter *OC = OperationCenter::get_instance();
 	FontCenter *FC = FontCenter::get_instance();
 
 	// Flush the screen first.
@@ -282,15 +286,28 @@ Game::game_draw() {
 			al_clear_to_color(al_map_rgb(173, 216, 230)); // 預設背景顏色
 		}
 		// user interface
-		if(state != STATE::START) {
+		//if(state != STATE::START) {
 			DC->map->draw();
 			DC->hero->draw();
-		}
+		//}
 	}
 	switch(state) {
 		case STATE::START: {
-		} case STATE::LEVEL: {
-			char buffer[100];
+			al_draw_text(
+				FC->caviar_dreams[FontSize::LARGE], al_map_rgb(0, 0, 0),
+				DC->window_width/2., DC->window_height/4.,
+				ALLEGRO_ALIGN_CENTRE, "Get into the portal to start the game.");
+			al_draw_text(
+				FC->caviar_dreams[FontSize::LARGE], al_map_rgb(0, 0, 0),
+				0., DC->window_height/2.5,
+				ALLEGRO_ALIGN_LEFT, "Space to double jump.");
+			al_draw_text(
+				FC->caviar_dreams[FontSize::LARGE], al_map_rgb(0, 0, 0),
+				DC->window_width, DC->window_height/2.5,
+				ALLEGRO_ALIGN_RIGHT, "LEFT and RIGHT to move.");
+			break;
+		} case STATE::LEVEL: { 
+ 			char buffer[100];
 			sprintf(buffer, "Death count = %d", DC->death_count);
 			al_draw_text(
 				FC->caviar_dreams[FontSize::LARGE], al_map_rgb(255, 255, 255),

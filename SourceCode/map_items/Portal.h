@@ -32,11 +32,14 @@ class Portal : public Object
 
         
     private:
-        ALLEGRO_BITMAP *image; // 物件圖片
+        float x; // tile x 座標
+        float y; // tile y 座標 
         float portal_width;  // 寬度
         float portal_height; // 高度
-        float x; // tile x 座標
-        float y; // tile y 座標
+        ALLEGRO_BITMAP *image; // 物件圖片
+
+       
+        
 };
 
 

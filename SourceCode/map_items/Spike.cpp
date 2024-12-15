@@ -66,6 +66,9 @@ void Spike::update() {
             this->shape->update_center_y(this->y + this->tile_height / 2);
         }
         
+        if (this->y >= DC->window_height-this->tile_height) {
+            detected = false;
+        }
     }
 
 }

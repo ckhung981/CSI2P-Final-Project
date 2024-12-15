@@ -23,6 +23,9 @@ class Map {
 		// 更新整個地圖e
 		void update();
 
+		void create_map(const char* map_path);
+		void destroy_map();
+
 		Tile  *create_tile(float x, float y, float width, float height, const char* image_path, int type);
 		Spike *create_spike(float x, float y, float width, float height, const char* image_path, int type);
 		Portal *create_portal(float x, float y, float width, float height, const char* image_path);

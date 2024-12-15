@@ -11,10 +11,9 @@
 // 圖片路徑 
 constexpr char TILE_IMAGE_PATH[] = "./assets/image/tile/red_block.png";
 constexpr char SPIKE_IMAGE_PATH[] = "./assets/image/spike/triangle_gradient_no_margin.png";
-constexpr char PORTAL_IMAGE_PATH[] = "./assets/image/portal/exit_2.png";
+constexpr char PORTAL_IMAGE_PATH[] = "./assets/image/portal/green_portal_no_gray_bg.png";
 
-//地圖路徑
-constexpr char MAP_PATH[] = "./assets/map/tile_based_map_dynamic.csv";
+
 
 enum block_state{
     EMPTY, //0
@@ -35,9 +34,60 @@ Map::Map() {}
 
 // 初始化整個地圖，從 CSV 文件中讀取 2D 地圖數據
 void Map::init() {
-	DataCenter *DC = DataCenter::get_instance();
+    DataCenter *DC = DataCenter::get_instance();
+    //地圖路徑
+    if (DC->is_in_start){
+        constexpr char MAP_PATH_START[] = "./assets/map/game_start.csv";
+        create_map(MAP_PATH_START);
+        game_start = false;
+    }
+    else{
+        destroy_map();
+        constexpr char MAP_PATH[] = "./assets/map/tile_based_map_dynamic.csv";
+        create_map(MAP_PATH);
+    }   
+}
 
-    std::ifstream file(MAP_PATH); // 指定 CSV 文件的路徑
+// 繪製所有的方磚
+void Map::draw() {
+    DataCenter *DC = DataCenter::get_instance();
+    for (auto &spike_ptr : DC->spikes) {
+        Spike &spike = *spike_ptr;
+        spike.draw();
+    }
+    for (auto &portal_ptr : DC->portals) {
+        Portal &portal = *portal_ptr;
+        portal.draw();
+    }
+        for (auto &tile_ptr : DC->tiles) {
+        Tile &tile = *tile_ptr;
+        tile.draw();
+    }
+}
+
+// 更新整個地圖
+void Map::update() {
+    DataCenter *DC = DataCenter::get_instance();
+    for (auto &tile_ptr : DC->tiles) {
+        Tile &tile = *tile_ptr;
+        tile.update();
+    }
+    for (auto &spike_ptr : DC->spikes) {
+        Spike &spike = *spike_ptr;
+        spike.update();
+    }
+    for (auto &portal_ptr : DC->portals) {
+        Portal &portal = *portal_ptr;
+        portal.update();
+    }
+    DC->remove_tile();   
+
+}
+
+void Map::create_map(const char* map_path) {
+    	DataCenter *DC = DataCenter::get_instance();
+
+    std::ifstream file(map_path); // 指定 CSV 文件的路徑
     if (!file.is_open()) {
         std::cerr << "Error: Could not open map CSV file." << std::endl;
     }
@@ -109,40 +159,9 @@ void Map::init() {
     }
 }
 
-// 繪製所有的方磚
-void Map::draw() {
+void Map::destroy_map() {
     DataCenter *DC = DataCenter::get_instance();
-    for (auto &spike_ptr : DC->spikes) {
-        Spike &spike = *spike_ptr;
-        spike.draw();
-    }
-    for (auto &portal_ptr : DC->portals) {
-        Portal &portal = *portal_ptr;
-        portal.draw();
-    }
-        for (auto &tile_ptr : DC->tiles) {
-        Tile &tile = *tile_ptr;
-        tile.draw();
-    }
-}
-
-// 更新整個地圖
-void Map::update() {
-    DataCenter *DC = DataCenter::get_instance();
-    for (auto &tile_ptr : DC->tiles) {
-        Tile &tile = *tile_ptr;
-        tile.update();
-    }
-    for (auto &spike_ptr : DC->spikes) {
-        Spike &spike = *spike_ptr;
-        spike.update();
-    }
-    for (auto &portal_ptr : DC->portals) {
-        Portal &portal = *portal_ptr;
-        portal.update();
-    }
-    DC->remove_tile();   
-
+    DC->reset();
 }
 
 Tile *Map::create_tile(float x, float y, float width, float height, const char* image_path, int type) {

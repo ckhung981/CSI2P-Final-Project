@@ -7,6 +7,7 @@
 #include "map_items/Tile.h"
 #include <cstdio>
 #include <iostream>
+#include <unistd.h>
 namespace HeroSetting {
 	static constexpr char gif_root_path[50] = "./assets/gif/hero";
 	static constexpr char gif_postfix[][10] = {
@@ -21,7 +22,6 @@ void Hero::init(){
             HeroSetting::gif_postfix[static_cast<int>(type)]);
         gif_path[static_cast<HeroState>(type)] = std::string(buffer);    
     }
-    GIFCenter *GIFC = GIFCenter::get_instance();
     DataCenter *DC = DataCenter::get_instance();
     Map *map = DC->map;
     
@@ -189,7 +189,6 @@ void Hero::draw(){
     // 縮放的目標大小
     float target_width = this->hero_width;
     float target_height = this->hero_height;
-    
     // 使用 Allegro 繪製動態縮放的 GIF
     al_draw_scaled_bitmap(
         gif->frames[gif->display_index].rendered, // GIF 當前幀的圖片
