@@ -1,5 +1,8 @@
 # Introduction to Programming II Final Project Template
-> Class Hwann-Tzong Chen
+>
+## How to execute
+1.Download whole document of  CSI2P-Final-Project
+2.Enter the Soucecode to execute game.exe
 
 ## Resource
 
