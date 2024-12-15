@@ -39,7 +39,6 @@ void Map::init() {
     if (DC->is_in_start){
         constexpr char MAP_PATH_START[] = "./assets/map/game_start.csv";
         create_map(MAP_PATH_START);
-        game_start = false;
     }
     else{
         destroy_map();

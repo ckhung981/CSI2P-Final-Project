@@ -25,6 +25,10 @@ constexpr char background_sound_path[] = "./assets/sound/BGM.mp3";
 constexpr char game_over_sound_path[] = "./assets/sound/die_1.MP3";
 constexpr char game_win_sound_path[] = "./assets/sound/win.mp3";
 constexpr char game_start_sound_path[] = "./assets/sound/BGM_gamestart.mp3";
+constexpr char game_enter_sound_path[] = "./assets/sound/Rick_roll.MP3";
+
+bool rickroll_played = false;
+
 
 /**
  * @brief Game entry.
@@ -165,6 +169,7 @@ Game::game_update() {
 	static ALLEGRO_SAMPLE_INSTANCE *game_start = nullptr;
 	static ALLEGRO_SAMPLE_INSTANCE *gameover = nullptr;
 	static ALLEGRO_SAMPLE_INSTANCE *win = nullptr;
+	static ALLEGRO_SAMPLE_INSTANCE *rickroll = nullptr;
 
 	switch(state) {
 		case STATE::START: {			
@@ -174,11 +179,26 @@ Game::game_update() {
 				BGM_played = true;
 			}
 			if (DC->is_win) {
+				
+				static bool BGM_played = false;
+				if(!BGM_played) {
+					SC->toggle_playing(game_start);
+					rickroll = SC->play(game_enter_sound_path, ALLEGRO_PLAYMODE_ONCE);
+					BGM_played =true;
+				}
+				rickroll_played = true;
+				DC->is_win = false;
+			}
+
+			if (DC->hero->shape->center_x()+ DC->hero->hero_width/1.5 >= DC->window_width) {
 				debug_log("<Game> state: change to LEVEL\n");
 				state = STATE::LEVEL;
-				DC->is_win = false;
 				DC->is_in_start = false;	
-				SC->toggle_playing(game_start);
+				if (rickroll_played) {
+					SC->toggle_playing(rickroll);
+				} else {
+					SC->toggle_playing(game_start);
+				}
 				game_restart();
 			}
 			break;
@@ -274,7 +294,6 @@ void
 Game::game_draw() {
 	DataCenter *DC = DataCenter::get_instance();
 	FontCenter *FC = FontCenter::get_instance();
-
 	// Flush the screen first.
 	al_clear_to_color(al_map_rgb(100, 100, 100));
 	if(state != STATE::END) {
@@ -293,6 +312,7 @@ Game::game_draw() {
 	}
 	switch(state) {
 		case STATE::START: {
+			
 			al_draw_text(
 				FC->caviar_dreams[FontSize::LARGE], al_map_rgb(0, 0, 0),
 				DC->window_width/2., DC->window_height/4.,
@@ -305,6 +325,12 @@ Game::game_draw() {
 				FC->caviar_dreams[FontSize::LARGE], al_map_rgb(0, 0, 0),
 				DC->window_width, DC->window_height/2.5,
 				ALLEGRO_ALIGN_RIGHT, "LEFT and RIGHT to move.");
+			if (rickroll_played) {
+				al_draw_text(
+					FC->caviar_dreams[FontSize::LARGE], al_map_rgb(0, 0, 0),
+					DC->window_width*19/20, DC->window_height*17/20,
+					ALLEGRO_ALIGN_RIGHT, "This way ---->");
+			}
 			break;
 		} case STATE::LEVEL: { 
  			char buffer[100];

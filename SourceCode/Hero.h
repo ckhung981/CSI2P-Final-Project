@@ -30,6 +30,7 @@ class Hero : public Object
         float jump_speed;// 跳躍時的初速度 
         const int max_jumps = 2; // 最大跳躍次數
     private:
+        int frame_index;
         
         HeroState state = HeroState::FRONT;
         double speed = 5;
