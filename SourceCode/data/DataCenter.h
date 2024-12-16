@@ -35,7 +35,7 @@ public:
 	void reset();
 	void remove_tile();
 public:
-	bool debug_mode = false;
+	bool debug_mode = true;
 	bool is_win = false;
 	bool is_in_start = true;
 	int death_count = 0;
