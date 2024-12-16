@@ -92,7 +92,7 @@ public:
 	/**
 	 * @brief Raw list of Monster objects.
 	 * @see Monster
-	 */
+	 */ 
 	std::vector<Monster*> monsters;
 	/**
 	 * @brief Raw list of Tower objects.
