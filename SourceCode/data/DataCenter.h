@@ -36,6 +36,7 @@ public:
 	void remove_tile();
 public:
 	bool debug_mode = false;
+	bool invincible = false;
 	bool is_win = false;
 	bool is_in_start = true;
 	int death_count = 0;

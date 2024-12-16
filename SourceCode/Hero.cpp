@@ -200,7 +200,7 @@ void Hero::draw(){
 void Hero::die(){
     DataCenter *DC = DataCenter::get_instance();
     HP = 0;
-    if (DC->debug_mode) {
+    if (DC->invincible) {
         std::cout << "Hero died!" << std::endl;
         HP = 1;
     }
