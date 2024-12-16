@@ -12,8 +12,11 @@ class Level;
 class Monster;
 class Tower;
 class Bullet;
-
+class Tile;
+class Map;
 class Hero;
+class Spike;
+class Portal;
 
 /**
  * @brief Stores generic global data and relatively small data structures.
@@ -29,7 +32,15 @@ public:
 		return &DC;
 	}
 	~DataCenter();
+	void reset();
+	void remove_tile();
 public:
+	bool debug_mode = false;
+	bool invincible = false;
+	bool is_win = false;
+	bool is_in_start = true;
+	int death_count = 0;
+	double scale;
 	double FPS;
 	int window_width, window_height;
 	/**
@@ -82,7 +93,7 @@ public:
 	/**
 	 * @brief Raw list of Monster objects.
 	 * @see Monster
-	 */
+	 */ 
 	std::vector<Monster*> monsters;
 	/**
 	 * @brief Raw list of Tower objects.
@@ -94,7 +105,36 @@ public:
 	 * @see Bullet
 	 */
 	std::vector<Bullet*> towerBullets;
+
+	std::vector<Tile*> tiles;
+	/**
+	 * @brief Stores the map of the game.
+	 * @details The map is a 2D array of tiles.
+	 * @see Tile
+	 */
+	std::vector<Spike*> spikes;
+	/**
+	 * @brief Stores the spikes of the game.
+	 * @details The spikes are the obstacles that the hero should avoid.
+	 * @see Spike
+	 */
+	std::vector<Portal*> portals;
+	/**
+	 * @brief Stores the portals of the game.
+	 * @details The portals are the objects that the hero should reach to win the game.
+	 * @see Portal
+	 */
+	
+
+	Map *map;
 	Hero *hero;
+	/**
+	 * @brief Stores the hero object.
+	 * @details The hero is the main character of the game.
+	 * @see Hero
+	 */
+
+
 private:
 	DataCenter();
 };

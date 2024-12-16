@@ -2,6 +2,7 @@
 #include "Point.h"
 #include "Rectangle.h"
 #include "Circle.h"
+#include "Triangle.h"
 #include "../Utils.h"
 #include <algorithm>
 
@@ -39,12 +40,26 @@ bool checkOverlap(const Circle *c1, const Circle *c2) {
 	return (d * d) >= Point::dist2(Point(c1->x, c1->y), Point(c2->x, c2->y));
 }
 
+bool checkOverlap(const Triangle *t, const Rectangle *r) {
+	return t->contain(r->x1, r->y1) || t->contain(r->x2, r->y1) || t->contain(r->x1, r->y2) || t->contain(r->x2, r->y2)\
+	||( (r->x1 <= t->x1 && t->x1 <= r->x2) && (r->y1 <= t->y1 && t->y1 <= r->y2)) \
+	|| ((r->x1 <= t->x2 && t->x2 <= r->x2) && (r->y1 <= t->y2 && t->y2 <= r->y2)) \
+	|| ((r->x1 <= t->x3 && t->x3 <= r->x2) && (r->y1 <= t->y3 && t->y3 <= r->y2));
+
+
+}
+
+bool checkOverlap(const Triangle *t, const Point *p) {
+	return t->contain(p->x, p->y);
+}
+
 bool
 Point::overlap(const Shape &s) const {
 	switch(s.getType()) {
 		case ShapeType::POINT: return checkOverlap(this, static_cast<const Point*>(&s));
 		case ShapeType::RECTANGLE: return checkOverlap(this, static_cast<const Rectangle*>(&s));
 		case ShapeType::CIRCLE: return checkOverlap(this, static_cast<const Circle*>(&s));
+		case ShapeType::TRIANGLE: return checkOverlap(static_cast<const Triangle*>(&s), this);
 	}
 	GAME_ASSERT(false, "Unknown ShapeType.");
 }
@@ -55,6 +70,7 @@ Rectangle::overlap(const Shape &s) const {
 		case ShapeType::POINT: return checkOverlap(static_cast<const Point*>(&s), this);
 		case ShapeType::RECTANGLE: return checkOverlap(this, static_cast<const Rectangle*>(&s));
 		case ShapeType::CIRCLE: return checkOverlap(this, static_cast<const Circle*>(&s));
+		case ShapeType::TRIANGLE: return checkOverlap(static_cast<const Triangle*>(&s), this);
 	}
 	GAME_ASSERT(false, "Unknown ShapeType.");
 }
@@ -67,4 +83,12 @@ Circle::overlap(const Shape &s) const {
 		case ShapeType::CIRCLE: return checkOverlap(this, static_cast<const Circle*>(&s));
 	}
 	GAME_ASSERT(false, "Unknown ShapeType.");
+}
+
+bool
+Triangle::overlap(const Shape &s) const {
+	switch(s.getType()) {
+		case ShapeType::POINT: return checkOverlap(this,static_cast<const Point*>(&s));
+		case ShapeType::RECTANGLE: return checkOverlap(this,static_cast<const Rectangle*>(&s));
+	}
 }

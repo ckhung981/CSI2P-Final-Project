@@ -2,7 +2,7 @@
 #define GAME_H_INCLUDED
 
 #include <allegro5/allegro.h>
-#include "UI.h"
+
 
 /**
  * @brief Main class that runs the whole game.
@@ -18,6 +18,7 @@ public:
 	void game_init();
 	bool game_update();
 	void game_draw();
+	void game_restart();
 private:
 	/**
 	 * @brief States of the game process in game_update.
@@ -27,6 +28,8 @@ private:
 		START, // -> LEVEL
 		LEVEL, // -> PAUSE, END
 		PAUSE, // -> LEVEL
+		DIE, // -> LEVEL, END
+		WIN, // -> END
 		END
 	};
 	STATE state;
@@ -37,7 +40,6 @@ private:
 	ALLEGRO_DISPLAY *display;
 	ALLEGRO_TIMER *timer;
 	ALLEGRO_EVENT_QUEUE *event_queue;
-	UI *ui;
 };
 
 #endif
