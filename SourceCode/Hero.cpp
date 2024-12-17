@@ -69,6 +69,7 @@ void Hero::update() {
     float hit_buffet_y = abs(velocity_y*1.1);
     float hit_buffet_x = abs(speed*1.1);
     
+    
     for (const auto &tile_ptr : DC->tiles) {
         Tile &tile = *tile_ptr;
         if (shape->overlap(*tile.shape)) {
@@ -94,8 +95,13 @@ void Hero::update() {
         }
     }
 
-    if (shape->center_y() + hero_height / 2 >= window_height) {
-        die();
+    if (shape->center_y() + hero_height / 2 > window_height) {
+        if (DC->invincible) {
+            shape->update_center_y(window_height - hero_height / 2 - 1);
+            on_ground = true;
+        } else {
+            die();
+        }
     }
  
     if (on_ground) {
