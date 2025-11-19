@@ -1,9 +1,21 @@
 # Introduction to Programming II Final Project Template
 >
-## How to execute
-1.Download whole document of  CSI2P-Final-Project
+## How to compiler 
 
-2.Enter the Soucecode to execute game.exe
+1. get into the "SourceCode" folder 
+2. enter "make"
+
+## How to execute
+1. Download whole document of  CSI2P-Final-Project
+2. Enter the Soucecode to execute game.exe
+
+## How to control
+1. Left/Right: Move hero to left/right
+2. Space: Jump(can jump twice in a row)
+
+## goal
+Reach the green portal
+
 
 ## Resource
 
