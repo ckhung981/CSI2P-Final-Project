@@ -208,7 +208,7 @@ Game::game_update() {
 				background = SC->play(background_sound_path, ALLEGRO_PLAYMODE_LOOP);
 				BGM_played = true;
 			}
-			if(DC->key_state[ALLEGRO_KEY_I] && !DC->prev_key_state[ALLEGRO_KEY_I] && DC->invincible) {
+			if(DC->key_state[ALLEGRO_KEY_I] && !DC->prev_key_state[ALLEGRO_KEY_I]) {
 				if (DC->invincible) {
 					DC->invincible = false;
 					std::cout << "Invincible mode off" << std::endl;

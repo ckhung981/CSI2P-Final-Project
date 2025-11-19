@@ -12,8 +12,11 @@
 ## How to control
 1. Left/Right: Move hero to left/right
 2. Space: Jump(can jump twice in a row)
+3. P: Pause/Restart Game
+4. R: Restart game when you are died
+5. I: Cheat Mode(Invincible)
 
-## goal
+## Goal
 Reach the green portal
 
 
